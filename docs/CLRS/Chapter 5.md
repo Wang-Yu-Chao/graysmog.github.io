@@ -16,7 +16,7 @@ UNBIASED-RANDOM()
                 return UNBIASED-RANDOM()
 ```
 
-两次调用BIASED-RANDOM，输出0、1和1、0的概率都为p(1-p)，即每次调用UNBIASED-RANDOM有2p(1-p)的概率完成该算法；有<a href="http://www.codecogs.com/eqnedit.php?latex=2p^{2}&space;-&space;2p&space;&plus;&space;1" target="_blank"><img src="http://latex.codecogs.com/png.latex?2p^{2}&space;-&space;2p&space;&plus;&space;1" title="2p^{2} - 2p + 1" /></a>的概率未完成。
+两次调用BIASED-RANDOM，输出0、1和1、0的概率都为<a href="http://www.codecogs.com/eqnedit.php?latex=p(1-p)" target="_blank"><img src="http://latex.codecogs.com/png.latex?p(1-p)" title="p(1-p)" /></a>，即每次调用UNBIASED-RANDOM有<a href="http://www.codecogs.com/eqnedit.php?latex=2p(1-p)" target="_blank"><img src="http://latex.codecogs.com/png.latex?2p(1-p)" title="2p(1-p)" /></a>的概率完成该算法；有<a href="http://www.codecogs.com/eqnedit.php?latex=2p^{2}&space;-&space;2p&space;&plus;&space;1" target="_blank"><img src="http://latex.codecogs.com/png.latex?2p^{2}&space;-&space;2p&space;&plus;&space;1" title="2p^{2} - 2p + 1" /></a>的概率未完成。
 
 令<a href="http://www.codecogs.com/eqnedit.php?latex=P_{i}" target="_blank"><img src="http://latex.codecogs.com/png.latex?P_{i}" title="P_{i}" /></a>为第i次调用UNBIASED-RANDOM后未完成的概率
 
