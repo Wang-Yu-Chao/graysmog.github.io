@@ -2,7 +2,8 @@
 
 《数据结构与算法分析：C语言实现》一书的笔记
 
-1. [Stack](/docs/Data Structure/stack.md)
+1. [栈 Stack](/docs/Data Structure/stack.md)
+2. [列 List](/docs/Data Structure/list.md)
 
 ## 《算法导论》课后习题个人解答
 
