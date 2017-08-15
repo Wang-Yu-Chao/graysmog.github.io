@@ -9,7 +9,7 @@
 
 《算法导论》中一些有趣题目的答案，个人想法，不一定正确
 
-1. [第五章](/docs/CLRS/Chapter 5.md)
+1. [第5章](/docs/CLRS/Chapter 5.md)
 
 ## 编译原理
 
