@@ -25,10 +25,12 @@ void Pop(Stack S);
 ```
 
 ### 链表实现(Linked List Implementation)
+
 Header作为Stack的指针，栈顶在头部（Header之后），位置不变。
 
 ```c
 /* Linked list implementation */
+
 typedef int ElementType;
 
 struct Node
@@ -108,6 +110,7 @@ void Pop(Stack S)
 
 ```c
 /* Array implementation */
+
 struct StackRecord;
 typedef struct StackRecord *Stack;
 

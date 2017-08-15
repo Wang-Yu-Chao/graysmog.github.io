@@ -1,34 +1,34 @@
-# List
+## List
 
-## 基本操作
+### 基本操作
 
 Find, Insert, Delete, FindKth
 
 Array Implementation:
-Find: O(n)
-FindKth: O(1)
-Insert/Delete: O(n)
-Building with n successive inserts: O(n^2)
+- Find: O(n)
+- FindKth: O(1)
+- Insert/Delete: O(n)
+- Building with n successive inserts: O(n^2)
 
 Linked Lists:
-Find: O(n)
-FindKth(i): O(i)
-Insert: O(1)
-Delete: O(n)
+- Find: O(n)
+- FindKth(i): O(i)
+- Delete: O(n)
 
-## 细节
-1.A sentinel node (Header)
+### 细节
+1. A sentinel node (Header)
 避免从list的开端insert/delete而丢失整个list。
-2.FindPrevious
+2. FindPrevious
 用于Delete操作，时间复杂度为O(n)。
 
-## 易错点
-1.空指针，如未初始化的指针，未分配空间的指针。
-2.malloc。加入stdlib.h，记得释放指针，并且该指针不能再直接使用。
+### 易错点
+1. 空指针，如未初始化的指针，未分配空间的指针。
+2. malloc。加入stdlib.h，记得释放指针，并且该指针不能再直接使用。
 
 ### 代码：链表实现
 
 ```c
+
 #ifndef _List_h
 
 struct Node;
@@ -50,9 +50,9 @@ Position Advance(Position P);
 ElementType Retreve(Position P);
 
 #endif
-```
 
 /* Place in implementation file */
+
 typedef int ElementType;
 
 struct Node
