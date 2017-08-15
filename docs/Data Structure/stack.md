@@ -13,18 +13,18 @@ struct Node;
 typedef struct Node *PtrToNode;
 typedef PtrToNode Stack;
 
-int IsEmpty(Stack S); 
+int IsEmpty(Stack S);
 Stack CreateStack(void);
-void DisposeStack(Stack S); 
-void MakeEmpty(Stack S); 
-void Push(ElementType X, Stack S); 
-ElementType Top(Stack S); 
-void Pop(Stack S); 
+void DisposeStack(Stack S);
+void MakeEmpty(Stack S);
+void Push(ElementType X, Stack S);
+ElementType Top(Stack S);
+void Pop(Stack S);
 
 #endif
 ```
 
-### Linked List Implementation
+### 链表实现(Linked List Implementation)
 Header作为Stack的指针，栈顶在头部（Header之后），位置不变。
 
 ```c
@@ -45,7 +45,7 @@ int IsEmpty(Stack S)
 Stack CreateStack(void)
 {
     Stack S;
-       
+
     S = (Stack) malloc(sizeof(struct Node));
     if (S == NULL)
         FatalError("out of space!!!");
@@ -65,7 +65,7 @@ void MakeEmpty(Stack S)
 void Push(ElementType X, Stack S)
 {
     PtrToNode TmpCell;
-   
+
     TmpCell = (PtrToNode) malloc(sizeof(struct Node));
     if (TmpCell == NULL)
         FatalError("out of space!!!");
@@ -88,7 +88,7 @@ ElementType Top(Stack S)
 void Pop(Stack S)
 {
     PtrToNode TmpCell;
-   
+
     if (IsEmpty(S))
         Error("Stack is empty");
     else
@@ -101,7 +101,7 @@ void Pop(Stack S)
 ```
 
 
-### Array Implementation
+### 数组实现(Array Implementation)
 - 栈作为一个结构，其中有栈的大小，栈顶指针和数组（栈主体）三个元素。
 - 需要提前声明数组的大小，所以应尽可能大。
 - 用TopOfStack（索引）指明栈顶的位置，所以栈顶不断变化。需要错误检查：空栈、满栈。
