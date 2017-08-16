@@ -4,7 +4,7 @@
 
 ### 性质
 - An Avl Tree is identical to a binary search tree, except that for every node in the tree, the height of the Left and right subtree can differ by at most 1.
-- All the operation: <a href="http://www.codecogs.com/eqnedit.php?latex=O(\log&space;N)" target="_blank"><img src="http://latex.codecogs.com/png.latex?O(\log&space;N)" title="O(\log N)" /></a> time, except possibly insertion (assuming lazy deletion).
+- All the operation: <a href="http://www.codecogs.com/eqnedit.php?latex=O(\log&space;n)" target="_blank"><img src="http://latex.codecogs.com/png.latex?O(\log&space;N)" title="O(\log N)" /></a> time, except possibly insertion (assuming lazy deletion).
 
 ### 关键点
 - Single Rotation, Double Rotation

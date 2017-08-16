@@ -13,8 +13,8 @@
 ### 基本概念
 
 - 引入树的原因：Access time:
-    - linked lists: O(n)
-    - trees: O(logn)
+    - linked lists: <a href="http://www.codecogs.com/eqnedit.php?latex=O(n)" target="_blank"><img src="http://latex.codecogs.com/png.latex?O(n)" title="O(n)" /></a>
+    - trees: <a href="http://www.codecogs.com/eqnedit.php?latex=O(\log&space;n)" target="_blank"><img src="http://latex.codecogs.com/png.latex?O(\log&space;n)" title="O(\log n)" /></a>
 - tree属于DAG，有向无环图
 - depth: the length of the path from the root to <a href="http://www.codecogs.com/eqnedit.php?latex=n_{i}" target="_blank"><img src="http://latex.codecogs.com/png.latex?n_{i}" title="n_{i}" /></a>.
 - height: the length of the longedst path from <a href="http://www.codecogs.com/eqnedit.php?latex=n_{i}" target="_blank"><img src="http://latex.codecogs.com/png.latex?n_{i}" title="n_{i}" /></a> to a leaf.
