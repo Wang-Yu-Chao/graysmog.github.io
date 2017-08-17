@@ -15,6 +15,10 @@
 6. [AVL树 AVL Tree](/docs/Data Structure/avl tree.md)
 7. [伸展树 Splay Tree](/docs/Data Structure/splay tree.md)
 
+#### 散列表
+
+8. [散列表 Hash](/docs/Data Structure/hash.md)
+
 ## 《算法导论》课后习题个人解答
 
 《算法导论》中一些有趣题目的答案，个人想法，不一定正确
