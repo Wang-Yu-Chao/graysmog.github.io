@@ -4,7 +4,7 @@
 
 #### 基本数据结构
 
-1. [栈 Stack](/_posts/Data Structure/stack.md)
+1. [栈 Stack](/Data Structure/stack.md)
 2. [链表 List](/_posts/Data Structure/list.md)
 3. [队列 Queue](/_posts/Data Structure/queue.md)
 
