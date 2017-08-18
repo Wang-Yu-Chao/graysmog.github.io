@@ -1,0 +1,124 @@
+## Queue
+
+### 基本操作
+Enqueue, Dequeue/Front: O(1)
+
+### 数组实现(Array Implementation)
+循环数组，当Front/Rear到达数组末尾时，回到数组开头。
+
+```c
+#ifndef _Queue_h
+
+struct QueueRecord;
+typedef struct QueueRecord *Queue;
+
+int IsEmpty(Queue q);
+int IsFull(Queue q);
+Queue CreateQueue(int MaxElements);
+void DisposeQueue(Queue q);
+void MakeEmpty(Queue q);
+void Enqueue(ElementType x, Queue q);
+ElementType Front(Queue q);
+void Dequeue(Queue q);
+ElementType FrontAndDequeue(Queue q);
+
+#endif
+
+/* Array implementation */
+
+#define MinQueueSize (5)
+
+struct QueueRecord
+{
+    int Capacity;
+    int Size;
+    int Rear;
+    int Front;
+    ElementType *Array;
+};
+
+int IsEmpty(Queue q)
+{
+    return q->Size == 0;
+}
+
+int IsFull(Queue q)
+{
+    return q->Size == q->Capacity;
+}
+
+Queue CreateQueue(int MaxElement);
+{
+    Queue q;
+
+    if (MaxElement < MinQueueSize)
+        error("queue size is too small.");
+
+    q = (Queue) malloc(sizeof(struct QueueRecord));
+    if (q == NULL)
+        FatalError("no enough space");
+
+    q->Array = (ElementType *) malloc(sizeof(ElementType) * MaxElement);
+    if (q->Array == NULL)
+        FatalError("no enough space");
+    q->Capacity = MaxElement;
+    MakeEmpty(q);
+    return q;
+}
+
+void MakeEmpty(Queue q)
+{
+    q->Size = 0;
+    q->Rear = 0;
+    q->Front = 1;
+}
+
+void Enqueue(ElementType x, Queue q)
+{
+    if (IsFull(q))
+        error("full queue");
+    else
+    {
+        if (++q->Rear == q->Capacity)
+            q->Rear = 0;
+        q->Size++;
+        q->Array[q->Rear] = x;
+    }
+}
+
+ElementType Front(Queue q)
+{
+    if (IsEmpty(q))
+        error("empty queue");
+    else
+        return q->Array[q->Front];
+}
+
+void Dequeue(Queue q)
+{
+    if (IsEmpty(q))
+        error("empty queue");
+    else
+    {
+       	if (++q->Front == q->Capacity)
+q->Front = 0;
+        q->Size--;
+    }
+}
+
+ElementType FrontAndDequeue(Queue q)
+{
+    ElementType frontVal;
+
+    if (IsEmpty(q))
+        error("empty queue");
+    else
+    {
+        frontVal = q->Array[q->Front];
+        if (++q->Front == q->Capacity)
+q->Front = 0;
+        q->Size--;
+    }
+    return frontVal;
+}
+```
