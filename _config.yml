@@ -1,8 +1,3 @@
 theme: jekyll-theme-slate
 title: GraySmog的个人主页
 description: 技术文章、个人随笔 :P
-kramdown:
-    input: GFM
-    hard_wrap: false
-    math_engine: mathjax
-    syntax_highlighter: rouge
