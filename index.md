@@ -29,8 +29,9 @@
 
 从入门到放弃
 
+1. [概述](/docs/Compilers/intro.md)
+2. [词法分析器](/docs/Compilers/lexical analysis.md)
+
 ## 小随笔 :P
 
 写着玩儿
-
-- [测试](/docs/test.md)
