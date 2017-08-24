@@ -1,0 +1,514 @@
+# Heap
+
+## 框架
+
+- Binary Heap: Percolate is the basic operation
+- Leftist Heap: Swap conditionally, Merge is the basic operation
+- Skew Heap: Swap conditionally, Merge is the basic operation
+- d-Heaps
+- Binomial Queue: Insert takes O(1) in average
+
+## Binary Heap
+
+#### Structure Property
+- A heap is a binary tree that is completely filled, with the possible exception of the bottom level, which is filled from left to right, also known as a complete binary tree.
+- The height of a complete binary tree is O(logN). It can be represented in an array. For any element in array position i, the left child is in position 2i, the right child is in the cell after the left child (2i+1), and the parent is in the position [i/2].
+
+#### Heap Order Property
+- The smallest element should be at the root, and any subtree should also be a heap, then any node should be smaller than all of its descendants.
+
+#### 基本操作
+
+Initialize, Insert, DeleteMin
+
+#### 代码
+
+```c
+#ifndef _BinHeap_H
+
+struct HeapStruct;
+typedef struct HeapStruct *PriorityQueue;
+
+PriorityQueue Initialize(int MaxElements);
+void Destroy(PriorityQueue H);
+void MakeEpty(PriorityQueue H);
+void Insert(ElementType X, PriorityQueue H);
+ElementType DeleteMin(PriorityQueue H);
+ElementType FindMin(PriorityQueue H);
+int IsEmpty(PriorityQueue H);
+int IsFull(PriorityQueue H);
+
+#endif
+
+struct HeapStruct
+{
+int Capacity;
+	int Size;
+	ElementType *Elements;
+};
+
+/* H->Elements[0] is a sentinel */
+PriorityQueue Initialize(int MaxElements)
+{
+	PriorityQueue H;
+
+	if (MaxElements < MinPQSize)
+		fprintf(stderr, "Priority queue size is too small\n");
+
+	H = (PriorityQueue) malloc(sizeof(struct HeapStruct));
+	if (H == NULL)
+	{
+		fprintf(stderr, "Out of space!");
+		return NULL;
+	}
+
+	H->Capacity = MaxElements;
+	H->Size = 0;
+	H->Elements = (ElementType *) malloc(sizeof(ElementType) * (MaxElements + 1));
+	if (H->Elements == NULL)
+	{
+		fprintf(stderr, "Out of space!");
+		return NULL;
+	}
+	H->Elements[0] = MinData;
+
+	return H;
+}
+
+void MakeEmpty(PriorityQueue H)
+{
+	H->Size = 0;
+}
+
+int IsEmpty(PriorityQueue H)
+{
+	return H->Size == 0;
+}
+
+int IsFull(PriorityQueue H)
+{
+	return H->Size == H->Capacity;
+}
+
+void Insert(ElementType X, PriorityQueue H)
+{
+	int i;
+
+	if (isFull(H))
+	{
+		fprintf(stderr, "Priority queue is full\n");
+		return;
+	}
+
+	for (i = ++H->Size; H->Elements[i / 2] > X; i /= 2)
+		H->Elements[i] = H->Elements[i / 2];
+
+	H->Elements[i] = X;
+}
+
+ElementType DeleteMin(PriorityQueue H)
+{
+	int i, Child;
+	ElementType MinElement, LastElement;
+
+
+	if (IsEmpty(H))
+	{
+		fprintf(stderr, "Priority queue is empty");
+		return H->Elements[0];
+	}
+	MinElement = H->Elements[1];
+	LastElement = H->Elements[H->Size--];
+
+	for (i = 1; i * 2 <= H->Size; i = Child);
+	{
+		/* Find smaller child */
+		Child = i * 2;
+		if (H->Elements[Child] > H->Elements[Child + 1])
+			Child++;
+
+		/* Percolate one level */
+		if (H->Elements[Child] < LastElement)
+			H->Elements[i] = H->Elements[Child];
+		else
+			break;
+	}
+	H->Elements[i] = LastElement;
+
+	return MinElement;
+}
+```
+
+#### 注意
+
+Heap数组中第0个数Elements[0]一个sentinel，被赋予最小值。用作终点判断。
+DeleteMin中隐含了PercolateDown操作。
+
+#### 其他操作
+
+DecreaseKey, IncreaseKey, Delete, BuildHeap
+
+- DecreaseKey(P, D, H) lowers the value of the key at position P by a positive amount D. And the heap order is fixed by a percolate up.
+- IncreaseKey(P, D, H) increases the value of the key at position P by a positive amount D. And it is done with a percolate down.
+- Delete(P, H) removes the node at position P from the heap. It is done by first performing DecreaseKey(P, D, H), where D is a positive infinite number. Then perform DeleteMin(H)
+- BuildHeap(H) takes as input N keys and places them into an empty heap. It can be done by N successive Insert. Or, just place the N keys into the tree in any order, maintaining the structure property, then, if PercolateDown(i) from i = N/2 to i = 1
+
+#### 代码
+
+```c
+static void PercolateUp(int Position, PriorityQueue H)
+{
+	int i;
+	ElementType X;
+
+	X = H->Elements[Position];
+	for (i = Position; X < H->Elements[i / 2]; i /= 2)
+		H->Elements[i] = H->Elements[i / 2];
+
+	H->Elements[i] = X;
+}
+
+static void PercolateDown(int Position, PriorityQueue H)
+{
+	int i, Child;
+	ElementType X;
+
+	X = H->Elements[Position];
+
+	for (i = 1; i * 2 <= H->Size; i = Child)
+	{
+		Child = i * 2;
+		if (Child != H->Size && H->Elements[Child] > H->Elements[Child + 1])
+			Child++;
+
+		if (X > H->Elements[Child])
+			H->Elements[i] = H->Elements[Child];
+		else
+			break;
+	}
+	H->Elements[i] = X;
+}			
+
+void DecreaseKey(int Position, ElementType D, PriorityQueue H)
+{
+	H->Elements[Position] -= D;
+	PercolateUp(Position, H);
+}
+
+void IncreaseKey(int Position, ElementType D, PriorityQueue H)
+{
+	H->Elements[Position] += D;
+	PercolateDown(Position, H);
+}
+
+void Delete(int Position, PriorityQueue H)
+{
+	DecreaseKey(Position, MaxElement, H);
+	DeleteMin(H);
+}
+
+void BuildHeap(ElementType *Source, int N, PriorityQueue H)
+{
+	int i;
+
+	MakeEmpty(H);
+
+	for (i = 0; i < N; i++)
+		H->Elements[i] = Source[i];
+
+	for (i = N / 2; i > 0; i--)
+		PercolateDown(i, H);
+}
+```
+
+#### Heap的应用
+
+1. The Selection Problem
+    - The selection problem is to find the kth largest element.
+    - **Algorithm 1**: Read the elements into an array and sort them, returning the appropriate element. The running time is O(N^2).
+    - **Algorithm 2**: Read k elements into an array and sort them. The smallest of these is in the kth position. We process the remaining elements one by one. As an element arrives, it is compared with the kth element in the array. If it is larger, then the kth element is removed, and the new element is placed in the right place among the remaining k-1 elements. Finally return the kth element. The running time is O(N*k).
+    - **Algorithm 3**: Build a heap and perform k DeleteMin. The running time is O(NlogN).
+    - **Algorithm 4**: Maintain a heap H of the k largest elements. And the new element is compared with Hk which is the root of the heap H. The remaining steps are similar with Algorithm 2. The runing time is O(Nlogk).
+2. Event Simulation
+
+## d-Heaps
+
+#### Property
+
+- All node have d children (thus, a binary heap is a 2-heap).
+- d-heap is much shallower than a binary heap. So Insert is O(logdN). However, for large d, the DeleteMin is O(d*logdN).
+
+## 引入新的heap实现的目的
+
+- Aside from the inability to perform Finds, combining two heaps into one is a hard operation. There are a few ways of implementing heaps so that the running time of a Merge is O(logN).
+- There are three data structures which support the **Merge** operation efficiently.
+
+## Leftist Heaps
+
+Merging would seem to require copying one array into another, which would take O(N) time for equal-sized heaps. So all the advanced data structures that support efficient merging require the use of pointers. But this will make all the other operations slower. Pointer manipulation is generally more time-consuming than multiplication and division.
+
+#### The null path length (Npl)
+
+- Npl of any node X to be the length of the shortest path from X to a node without two children. The Npl of a node with zero or one child is 0, while Npl(NULL) = -1.
+- The Npl of any node is 1 more than the minimum of the Npl of its children.
+
+#### Property
+
+1. For every node X in the leftist heap, the Npl of the left child is at least as large as that of the right child. And it ensure that the tree is unbalanced.
+2. A leftist tree with r nodes on the right path must have at least 2^r - 1 nodes.
+
+So a leftist tree of N nodes has a right path containing at most [log(N+1)] nodes. The general idea for the leftist heap operations is to perform all the work on the right path, which is guaranteed to be short. The only tricky part is that performing Insert and Merge on the right path could destroy the leftist heap property. ;
+
+#### Operations
+
+- The fundamental operation on leftist heaps is merging.
+- Merge: If either of the two heaps is empty, then we can return the other heap. Otherwise, we recursively merge the heap with the larger root with the right subheap with the smaller root. Although the resulting heap satisfies the heap order property, it is not leftist. The right subtree of the root is leftist, because of the recursive step. The left subtree of the root has not been changed, so it too must still be leftist.  Thus we need only to fix the root. We can make the entire tree leftist by merely swapping the root's left and right children and updating the Npl--the new Npl is 1 plus the Npl of the new right node--completing the Merge.
+- Insert: Insertion can be viewed as a Merge of a one-node heap with a larger heap.
+- DeleteMin: DeleteMin destroys the root, creating two heaps, which can then be merged.
+
+#### 代码
+
+```c
+#ifndef
+
+struct TreeNode;
+typedef struct TreeNode *PriorityQueue;
+
+/* Minimal set of priority queue operations */
+/* Note that nodes will be shared among serveral */
+/* leftist heaps after a merge; the user must */
+/* make sure to not use the old leftist heaps */
+
+PriorityQueue Initialize(void);
+ElementType FindMin(PriorityQueue H);
+int IsEmpty(PriorityQueue H);
+PriorityQueue Merge(PriorityQueue H1, PriorityQueue H2);
+
+#define Insert(X, H) ( H = Insert1((X), H) )
+#define DeleteMin(H) ( H = DeleteMin1(H) )
+
+PriorityQueue Insert1(ElementType X, PriorityQueue H);
+PriorityQueue DeleteMin(PriorityQueue H);
+
+#endif
+
+struct TreeNode
+{
+	ElementType Element;
+	PriorityQueue Left;
+	PriorityQueue Right;
+	int Npl;
+};
+
+PriorityQueue Merge(PriorityQueue H1, PriorityQueue H2)
+{
+	if (H1 == NULL)
+		return H2;
+	if (H2 == NULL)
+		return H1;
+
+	if (H1->Element < H2->Element)
+		return Merge1(H1, H2);
+	else
+		return Merge1(H2, H1);
+}
+
+static void SwapChildren(PriorityQueue H)
+{
+	PriorityQueue Temp;
+	Temp = H->Left;
+	H->Left = H->Right;
+	H->Right = Temp;
+}
+
+static PriorityQueue Merge1(PriorityQueue H1, PriorityQueue H2)
+{
+	if (H1->Left == NULL)
+		H1->Left = H2;
+	else
+	{
+		H1->Right = Merge(H1->Right, H2);
+		if (H1->Right->Npl > H1->Left->Npl)
+			SwapChildren(H1);
+	}
+
+	H1->Npl = H1->Right->Npl + 1;
+
+	return H1;
+}
+
+PriorityQueue Insert1(ElementType X, PriorityQueue H)
+{
+	PriorityQueue SingleNode;
+
+	SingleNode = (PriorityQueue) malloc(sizeof(struct TreeNode));
+	if (SingleNode == NULL)
+	{
+		fprintf(stderr, "Out of space!");
+		return NULL;
+	}
+	SingleNode->Element = X;
+	SingleNode->Left = SingleNode->Right = NULL;
+	SingleNode->Npl = 0;
+
+	return Merge(H, SingleNode);
+}
+
+PriorityQueue DeleteMin(PriorityQueue H)
+{
+	PriorityQueue LeftHeap, RightHeap;
+
+	if (IsEmpty(H))
+	{
+		fprintf(stderr, "Priority queue is empty");
+		return H;
+	}
+	LeftHeap = H->Left;
+	RightHeap = H->Right;
+	free(H);
+
+	return Merge(LeftHeap, RightHeap);
+}
+```
+
+
+## Skew Heaps
+
+- A skew heap is a self-adjusting version of a leftist heap. Skew heaps are binary trees with heap order, but there is no structural constraint on these trees. For skew heaps, the swap is unconditional; we always do it, with the one exception that the largest of all the nodes on the right paths does not have its children swapped. This one exception is what happens in the natural recursive implecation, so it is not really a special case at all.
+- For any M consecutive operations, the total worst-case running time is O(MlogN). Thus, skew heaps have O(logN) amortized cost per operation.
+- Skew heaps have the advantage that no extra space is required to maintain path lengths and no tests are required to determine when to swap children.
+
+
+## Binomial Queues
+
+#### Running Time
+
+- Leftist and skew heaps support merging, insertion, and DeleteMin all in O(logN) time per operation.
+- Binary heaps support insertion in constant average time per operation.
+- Binomial queues support all three operations in O(logN) worst-case time per operation, but insertion take constant time on average.
+
+#### Binomial Queue Structure
+
+- A binomial queue is a collection of heap-ordered trees, known as a forest. Each of the heap-ordered trees is of a constrained form known as a binomial tree.
+- There is at most one binomial tree of every height. A binomial tree of height 0 is a one-node tree; Bk, of height k is formed by attaching a binomial tree, Bk-1, to another binomial tree, Bk-1. - Binomial trees of height k have exactly 2^k nodes.
+
+#### 代码
+
+```c
+typedef struct BinNode *Position;
+typedef struct Collection *BinQueue;
+
+struct BinNode
+{
+	ElementType Element;
+	Position LeftChild;
+	Position NextSibling;
+};
+
+struct Collection
+{
+	int CurrentSize;
+	BinTree TheTrees[MaxTrees];
+};
+
+BinTree CombineTrees(BinTree T1, BinTree T2)
+{
+	if (T1->Element > T2->Element)
+		return CombineTrees(T2, T1);
+	T2->NextSibling = T1->LeftChild;
+	T1->LeftChild = T2;
+	return T1;
+}
+
+BinQueue Merge(BinQueue H1, BinQueue H2)
+{
+	BinTree T1, T2, Carry = NULL;
+	int i, j;
+
+	if (H1->CurrentSize + H2->CurrentSize > Capacity)
+		fprintf(stderr, "Merge would exceed capacity");
+	H1->CurrentSize += H2->CurrentSize;
+	for (i = 0, j = 1; j <= H1->CurrentSize; i++, j *= 2)
+	{
+		T1 = H1->TheTrees[i]; T2 = H2->TheTrees[i];
+
+		switch (!!T1 + 2 * !!T2 + 4 * !!Carry)
+		{
+			case 0: /* No Trees */
+			case 1: /* Only H1 */
+				break;
+			case 2:	/* Only H2 */
+				H1->TheTrees[i] = T2;
+				H2->TheTrees[i] = NULL;
+				break;
+			case 4: /* Only Carry */
+				H1->TheTrees[i] = Carry;
+				Carry = NULL;
+				break;
+			case 3: /* H1 and H2 */
+				Carray = CombineTrees(T1, T2);
+				H1->TheTrees[i] = H2->TheTrees[i] = NULL;
+				break;
+			case 5: /* H1 and Carry	*/
+				Carry = CombineTrees(T1, Carry);
+				H1->TheTrees[i] = NULL;
+				break;
+			case 6: /* H2 and Carry */
+				Carry = CombineTrees(T2, Carry);
+				H2->TheTrees[i] = NULL;
+				break;
+			case 7: /* All three */
+				H1->TheTrees[i] = Carry;
+				Carry = CombineTrees(T1, T2);
+				H2->TheTrees[i] = NULL;
+				break;
+		}
+	}
+	return H1;
+}				
+
+ElementType DeleteMin(BinQueue H)
+{
+	int i, j;
+	int MinTree;	/* The tree with the minimum item */
+	BinQueue DeletedQueue;
+	Position DeletedTree, OldRoot;
+	ElementType MinItem;
+
+	if (IsEmpty(H))
+	{
+		fprintf(stderr, "Empty binomial queue");
+		return -Infinity;
+	}
+
+	MinItem = Infinity;
+	for (i = 0; i < MaxTrees; i++)
+	{
+		if (H->TheTrees[i] && H->TheTrees[i]->Element < MinTree)
+		{
+			MinItem = H->TheTrees[i]->Element;
+			MinTree = i;
+		}
+	}
+
+	DeletedTree = H->TheTrees[MinTree];
+	OldRoot = DeletedTree;
+	DeletedTree = DeletedTree->LeftChild;		
+	free(OldRoot);
+
+	DeletedQueue = Initialize();
+	DeletedQueue->CurrentSize = (1 << MinTree) -1;
+	for (j = MinTree - 1; j >= 0; j--)
+	{
+		DeletedQueue->TheTrees[j] = DeletedTree;
+		DeletedTree = DeleteTree->NextSibling;
+		DeletedQueue->TheTrees[j]->NextSibling = NULL;
+	}
+
+	H->TheTrees[MinTree] = NULL;
+	H->CurrentSize -= DeletedQueue->CurrentSize + 1;
+
+	Merge(H, DeletedQueue);
+	return MinItem;
+}
+```

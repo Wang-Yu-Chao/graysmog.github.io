@@ -19,6 +19,10 @@
 
 8. [散列表 Hash](/docs/Data Structure/hash.md)
 
+#### 堆
+
+9. [堆 Heap](/docs/Data Structure/heap.md)
+
 ## 《算法导论》课后习题个人解答
 
 《算法导论》中一些有趣题目的答案，个人想法，不一定正确
