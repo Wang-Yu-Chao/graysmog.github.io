@@ -1,3 +1,5 @@
+# 目录
+
 ## 数据结构
 
 《数据结构与算法分析：C语言实现》一书的笔记
@@ -10,18 +12,23 @@
 
 #### 树
 
-4. [树 Trees](/docs/Data Structure/trees.md)
-5. [二叉搜索树 Binary Search Tree](/docs/Data Structure/binary search tree.md)
-6. [AVL树 AVL Tree](/docs/Data Structure/avl tree.md)
-7. [伸展树 Splay Tree](/docs/Data Structure/splay tree.md)
+1. [树 Trees](/docs/Data Structure/trees.md)
+2. [二叉搜索树 Binary Search Tree](/docs/Data Structure/binary search tree.md)
+3. [AVL树 AVL Tree](/docs/Data Structure/avl tree.md)
+4. [伸展树 Splay Tree](/docs/Data Structure/splay tree.md)
+5. [红黑树 Red-Black Tree](/docs/Data Structure/r-b tree.md)
 
 #### 散列表
 
-8. [散列表 Hash](/docs/Data Structure/hash.md)
+1. [散列表 Hash](/docs/Data Structure/hash.md)
 
 #### 堆
 
-9. [堆 Heap](/docs/Data Structure/heap.md)
+1. [堆 Heap](/docs/Data Structure/heap.md)
+
+#### 排序
+
+1. [排序](/docs/Data Structure/sorting.md)
 
 ## 《算法导论》课后习题个人解答
 

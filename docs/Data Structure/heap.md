@@ -42,7 +42,7 @@ int IsFull(PriorityQueue H);
 
 struct HeapStruct
 {
-int Capacity;
+    int Capacity;
 	int Size;
 	ElementType *Elements;
 };
