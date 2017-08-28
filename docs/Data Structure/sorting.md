@@ -16,6 +16,7 @@
 ## Insertion Sort
 
 代码：
+```c
 void InsertionSort(ElementType A[], int N)
 {
 	int j, P;
@@ -29,38 +30,50 @@ void InsertionSort(ElementType A[], int N)
 		A[j] = Tmp;
 	}
 }
+```
 
-2. Shellsort
+## Shellsort
+
+### Shell's increment
+
 Shellsort routine using Shell's increment. The worst-case running time of Shellsort, using Shell's increment, is O(N^2).
-代码：
+
+```c
 void Shellsort(ElementType A[], int N)
 {
-int i, j, Increment;
-ElementType Tmp;
+    int i, j, Increment;
+    ElementType Tmp;
 
-for (Increment = N/2; Increment > 0; Increment /= 2)
-for (i = Increment; i < N; i++)
-{
-Tmp = A[i];
-for (j = i; j >= Increment; j -= Increment)
-if (Tmp < A[j - Increment])
-A[j] = A[j - Increment];
-else
-break;
-A[j] = Tmp;
+    for (Increment = N/2; Increment > 0; Increment /= 2)
+        for (i = Increment; i < N; i++)
+        {
+            Tmp = A[i];
+            for (j = i; j >= Increment; j -= Increment)
+                if (Tmp < A[j - Increment])
+                    A[j] = A[j - Increment];
+                else
+                    break;
+            A[j] = Tmp;
+        }
 }
-}
+```
 
 The problem with Shell's increments is that pairs of increments are not necessarily relatively prime, and thus the smaller increment can have little effect.
-Hibbard's increment gives better results in practice. His increment are of the form 1, 3, 7, ..., 2^k-1.  The key difference is that consecutive increments have no common factors. The worst-case running time of Shellsort using Hibbard's increment is O(N^3/2).
 
-Sedgewick has proposed several increment sequences that give an O(N^4/3) worst-case running time. The average running time is conjectured to be O(N^7/6). The best of these is the sequence {1, 5, 19, 41, 109, ...}, in which the terms are either of the form 9 * 4^i - 9 * 2^i + 1 or 4^i - 3 * 2^i + i.
+### Hibbard's increment
 
-3. Heapsort
-The basic strategy is to build a binary heap of N elements. The stage takes O(N) time. We then perform N DeleteMin operations. By recording these elements in a second array and then copying the array back ,we sort N elements. Since each DeleteMin takes O(logN) tiem, the total running time is O(NlogN).
-A clever way to avoid using a second array makes use of the fact that after each DeleteMin, the heap shrinks by 1. Thus the cell that was last in the heap can be used to store the element that was just deleted.
+Hibbard's increment gives better results in practice. His increment are of the form 1, 3, 7, ..., 2<sub>k-1</sub>.  The key difference is that consecutive increments have no common factors. The worst-case running time of Shellsort using Hibbard's increment is O(N^3/2).
 
-代码：
+### Sedgwick's increment
+
+Sedgewick has proposed several increment sequences that give an O(N^4/3) worst-case running time. The average running time is conjectured to be O(N^7/6). The best of these is the sequence {1, 5, 19, 41, 109, ...}, in which the terms are either of the form 9 * 4<sub>i</sub> - 9 * 2<sub>i</sub> + 1 or 4<sub>i</sub> - 3 * 2<sub>i</sub> + i.
+
+## Heapsort
+
+- The basic strategy is to build a binary heap of N elements. The stage takes O(N) time. We then perform N DeleteMin operations. By recording these elements in a second array and then copying the array back ,we sort N elements. Since each DeleteMin takes O(logN) tiem, the total running time is O(NlogN).
+- A clever way to avoid using a second array makes use of the fact that after each DeleteMin, the heap shrinks by 1. Thus the cell that was last in the heap can be used to store the element that was just deleted.
+
+```c
 #define LeftChild(i) (2 * (i) + 1)
 
 void PercDown(ElementType A[], int i, int N)
@@ -93,12 +106,13 @@ void Heapsort(ElementType A[], int N)
         PercDown(A, 0, i);
     }   
 }  
+```
 
-4. Mergesort
-Mergesort runs in O(NlogN) worst-case running time. The fundamental operation in this algorithm is merging two sorted lists. Because the lists are sorted, this can be done in one pass through the input, if the output is put in a thirt list. The basic merging algorithm takes two input arrays A and B, an output array C, and three counters, Aptr, Bptr, Cptr, which are initially set to the beginning of their respective arrays. The smaller of A[Aptr] and B[Bptr] is copied to the next entry in C, and the appropriate counters are advanced. When either input list is exhausted, the reminder of the other list is copied to C.
-The mergesort algorithm is a classic divide-and-conquer strategy. if N = 1, there is only one element to sort, and the answer is at hand. Otherwise, recursively mergesort the first half and the second half. This gives two sorted halves, which can then be merged together using the merging algorithm described above.
+## Mergesort
+- Mergesort runs in O(NlogN) worst-case running time. The fundamental operation in this algorithm is merging two sorted lists. Because the lists are sorted, this can be done in one pass through the input, if the output is put in a thirt list. The basic merging algorithm takes two input arrays A and B, an output array C, and three counters, Aptr, Bptr, Cptr, which are initially set to the beginning of their respective arrays. The smaller of A[Aptr] and B[Bptr] is copied to the next entry in C, and the appropriate counters are advanced. When either input list is exhausted, the reminder of the other list is copied to C.
+- The mergesort algorithm is a classic divide-and-conquer strategy. if N = 1, there is only one element to sort, and the answer is at hand. Otherwise, recursively mergesort the first half and the second half. This gives two sorted halves, which can then be merged together using the merging algorithm described above.
 
-代码：
+```c
 void Msort(ElementType A[], ElementType TmpArray[], int Left, int Right)
 {
     int Center;
@@ -151,16 +165,18 @@ void Merge(ElementType A[], ElementType TmpArray[], int Lpos, int Rpos, int Righ
     for (i = 0; i < NumElements; i++, RightEnd--)
         A[RightEnd] = TmpArray[RightEnd];
 }
+```
 
-5. Quicksort
-Quicksort is the fastest known sorting algorithm in practice. Its average running time is O(NlogN).
-Steps:
-1. If the number of elements in S is 0 or 1, then return.
-2. Pick any element v in S. This is called the pivot.
-3. Partition S - {v} (the remaining elements in S) into two disjoint groups S1 and S2.
-4. Return {quicksort(S1) followed by v followed by quicksort(S2)}.
+## Quicksort
 
-代码：
+- Quicksort is the fastest known sorting algorithm in practice. Its average running time is O(NlogN).
+- Steps:
+    1. If the number of elements in S is 0 or 1, then return.
+    2. Pick any element v in S. This is called the pivot.
+    3. Partition S - {v} (the remaining elements in S) into two disjoint groups S1 and S2.
+    4. Return {quicksort(S1) followed by v followed by quicksort(S2)}.
+
+```c
 /* Return median of Left, Center, and Right */
 /* Order these and hide the pivot */
 ElementType Median3(ElementType A[], int Left, int Right)
@@ -208,10 +224,11 @@ void Qsort(ElementType A[], int Left, int Right)
     else /* Do an insertion sort on the subarray */
         InsertionSort(A + Left, Right - Left + 1);
 }
+```
 
-6. Bucket Sort
-Any general sorting algorithm that uses only comparisons requires Ω(NlogN) time in the worst case, but it is still possible to sort in linear time in some special cases.
-For bucket sort to work, extra information must be available. The input A1, A2, ..., An must consist of only positive integers smaller than M. Keep an array called Count, of size M, which is initialized to all 0's. Thus, Count has M cells, or buckets, which are initially empty. When Ai is read, increment Count[Ai] by 1. After all the input is read, scan the Count array, printing out a representation of the sorted list. This algorithm takes O(M + N). if M is O(N), then the total is O(N).
+## Bucket Sort
+- Any general sorting algorithm that uses only comparisons requires Ω(NlogN) time in the worst case, but it is still possible to sort in linear time in some special cases.
+- For bucket sort to work, extra information must be available. The input A1, A2, ..., An must consist of only positive integers smaller than M. Keep an array called Count, of size M, which is initialized to all 0's. Thus, Count has M cells, or buckets, which are initially empty. When Ai is read, increment Count[Ai] by 1. After all the input is read, scan the Count array, printing out a representation of the sorted list. This algorithm takes O(M + N). if M is O(N), then the total is O(N).
 
-7. External Sorting
+## External Sorting
 The basic external sorting algorithm uses the Merge routine from mergesort.
