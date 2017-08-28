@@ -78,10 +78,10 @@ Thompson构造法有一个模版，用于构建对应于单字母RE的NFA，还�
 1. a的NFA ![a的NFA](/res/a的NFA.png)
 2. b的NFA ![b的NFA](/res/b的NFA.png)
 3. ab的NF ![ab的NFA](/res/ab的NFA.png)
-4. a|b的NFA ![a|b的NFA](/res/a或b的NFA.png)
+4. a\|b的NFA ![a|b的NFA](/res/a或b的NFA.png)
 5. a\*的NFA ![a*的NFA](/res/a闭包的NFA.png)
 
-这个构造法从为输入RE中每个字符构建简单的NFA开始。接下来，它按照优先级和括号规定的顺序，对简单NFA的集合应用选择、连接和闭包等转换。对于a(b|c)\*，按a、b、c、b|c（括号优先级最高）、(b|c)\*（闭包先于连接）、a(b|c)\*的顺序构建。
+这个构造法从为输入RE中每个字符构建简单的NFA开始。接下来，它按照优先级和括号规定的顺序，对简单NFA的集合应用选择、连接和闭包等转换。对于a(b\|c)\*，按a、b、c、b\|c（括号优先级最高）、(b\|c)\*（闭包先于连接）、a(b\|c)\*的顺序构建。
 
 ### 从NFA到DFA：子集构造法
 

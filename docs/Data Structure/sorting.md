@@ -62,15 +62,15 @@ The problem with Shell's increments is that pairs of increments are not necessar
 
 ### Hibbard's increment
 
-Hibbard's increment gives better results in practice. His increment are of the form 1, 3, 7, ..., 2<sub>k-1</sub>.  The key difference is that consecutive increments have no common factors. The worst-case running time of Shellsort using Hibbard's increment is O(N^3/2).
+Hibbard's increment gives better results in practice. His increment are of the form 1, 3, 7, ..., 2<sup>k-1</sup>.  The key difference is that consecutive increments have no common factors. The worst-case running time of Shellsort using Hibbard's increment is O(N^3/2).
 
 ### Sedgwick's increment
 
-Sedgewick has proposed several increment sequences that give an O(N^4/3) worst-case running time. The average running time is conjectured to be O(N^7/6). The best of these is the sequence {1, 5, 19, 41, 109, ...}, in which the terms are either of the form 9 * 4<sub>i</sub> - 9 * 2<sub>i</sub> + 1 or 4<sub>i</sub> - 3 * 2<sub>i</sub> + i.
+Sedgewick has proposed several increment sequences that give an O(N^4/3) worst-case running time. The average running time is conjectured to be O(N<sup>7/6</sup>). The best of these is the sequence {1, 5, 19, 41, 109, ...}, in which the terms are either of the form 9 * 4<sup>i</sup> - 9 * 2<sup>i</sup> + 1 or 4<sup>i</sup> - 3 * 2<sup>i</sup> + 1.
 
 ## Heapsort
 
-- The basic strategy is to build a binary heap of N elements. The stage takes O(N) time. We then perform N DeleteMin operations. By recording these elements in a second array and then copying the array back ,we sort N elements. Since each DeleteMin takes O(logN) tiem, the total running time is O(NlogN).
+- The basic strategy is to build a binary heap of N elements. The stage takes O(N) time. We then perform N DeleteMin operations. By recording these elements in a second array and then copying the array back, we sort N elements. Since each DeleteMin takes O(logN) time, the total running time is O(NlogN).
 - A clever way to avoid using a second array makes use of the fact that after each DeleteMin, the heap shrinks by 1. Thus the cell that was last in the heap can be used to store the element that was just deleted.
 
 ```c
