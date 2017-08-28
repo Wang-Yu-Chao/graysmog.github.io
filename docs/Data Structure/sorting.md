@@ -62,11 +62,11 @@ The problem with Shell's increments is that pairs of increments are not necessar
 
 ### Hibbard's increment
 
-Hibbard's increment gives better results in practice. His increment are of the form 1, 3, 7, ..., 2<sup>k-1</sup>.  The key difference is that consecutive increments have no common factors. The worst-case running time of Shellsort using Hibbard's increment is O(N^3/2).
+Hibbard's increment gives better results in practice. His increment are of the form 1, 3, 7, ..., 2<sup>k-1</sup>.  The key difference is that consecutive increments have no common factors. The worst-case running time of Shellsort using Hibbard's increment is O(N<sup>3/2</sup>).
 
 ### Sedgwick's increment
 
-Sedgewick has proposed several increment sequences that give an O(N^4/3) worst-case running time. The average running time is conjectured to be O(N<sup>7/6</sup>). The best of these is the sequence {1, 5, 19, 41, 109, ...}, in which the terms are either of the form 9 * 4<sup>i</sup> - 9 * 2<sup>i</sup> + 1 or 4<sup>i</sup> - 3 * 2<sup>i</sup> + 1.
+Sedgewick has proposed several increment sequences that give an O(N<sup>4/3</sup>) worst-case running time. The average running time is conjectured to be O(N<sup>7/6</sup>). The best of these is the sequence {1, 5, 19, 41, 109, ...}, in which the terms are either of the form 9 * 4<sup>i</sup> - 9 * 2<sup>i</sup> + 1 or 4<sup>i</sup> - 3 * 2<sup>i</sup> + 1.
 
 ## Heapsort
 
