@@ -9,6 +9,7 @@
 1. [栈 Stack](/docs/Data Structure/stack.md)
 2. [链表 List](/docs/Data Structure/list.md)
 3. [队列 Queue](/docs/Data Structure/queue.md)
+4. [互斥集 The Disjoint Set](/docs/Data Structure/disjoint set.md)
 
 #### 树
 

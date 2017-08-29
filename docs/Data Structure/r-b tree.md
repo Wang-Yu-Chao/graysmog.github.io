@@ -4,11 +4,11 @@
 
 ### 红黑性质
 
-1. 每个结点或是红色的，或是黑色的。
-2. 根结点是黑色的。
-3. 每个叶结点（NIL）是黑色的。
-4. 如果一个结点是红色的，则它的两个子结点都是黑色的。
-5. 对每个结点，从该结点到其所有后代叶结点的简单路径上，均包含相同数目的黑色结点。
+1. 每个结点或是红色的，或是黑色的。（二色性）
+2. 根结点是黑色的。(根色性)
+3. 每个叶结点（NIL）是黑色的。（叶色性）
+4. 如果一个结点是红色的，则它的两个子结点都是黑色的。（红子性）
+5. 对每个结点，从该结点到其所有后代叶结点的简单路径上，均包含相同数目的黑色结点。（黑高性）
 
 ### 树高性质
 
@@ -62,13 +62,13 @@ void LEFT-ROTATE(RBTREE T, RBNODE x)
 {
     RBNODE y;
 
-    /* 设置x的right为y \*/
+    /* 设置x的right为y */
     y = x->right;
-    /* 让y的left成为x的right \*/
+    /* 让y的left成为x的right */
     x->right = y->left;
     if (y->left != T->nil)
         y->left->p = x;
-    /* 交换p \*/
+    /* 交换p */
     y->p = x->p;
     if (x->p == T->nil)
         T->root = y;
@@ -76,13 +76,17 @@ void LEFT-ROTATE(RBTREE T, RBNODE x)
         x->p->left = y;
     else
         x->p->right = y;
-    /* 让x成为y的left \*/
+    /* 让x成为y的left */
     y->left = x;
     x->p = y;
 }
 ```
 
 ## 插入
+
+- 可以在O(lgn)时间内完成向一棵含n个结点的红黑树中插入一个新结点。
+- 利用二叉搜索树插入过程的一个略作修改的版本将结点z插入树T内，然后将结点z着为红色。
+- 用辅助过程RB-INSERT-FIXUP来对结点重新着色并旋转。
 
 ```c
 void RB-INSERT(RBTREE T, RBNODE z)
@@ -119,11 +123,11 @@ void RB-INSERT-FIXUP(RBTREE T, RBNODE z)
 
     while (z->p->color == RED)
     {
-        /* 对称情况一 \*/
+        /* 对称情况一 */
         if (z->p == z->p->p->left)
         {
             y = z->p->p->right;
-            /* case 1 \*/
+            /* case 1 */
             if (y->color == RED)
             {
                 z->p->color = BLACK;
@@ -131,13 +135,13 @@ void RB-INSERT-FIXUP(RBTREE T, RBNODE z)
                 z->p->p->color = RED;
                 z = z->p->p;
             }
-            /* case 2 \*/
+            /* case 2 */
             else if (z == z->p->right)
             {
                 z = z->p;
                 LEFT-ROTATE(T, z);
             }
-            /* case 3 \*/
+            /* case 3 */
             else
             {
                 z->p->color = BLACK;
@@ -146,11 +150,11 @@ void RB-INSERT-FIXUP(RBTREE T, RBNODE z)
             }
         }
 
-        /* 对称情况二 \*/
+        /* 对称情况二 */
         else
         {
             y = z->p->p->left;
-            /* case 1 \*/
+            /* case 1 */
             if (y->color == RED)
             {
                 z->p->color = BLACK;
@@ -158,13 +162,13 @@ void RB-INSERT-FIXUP(RBTREE T, RBNODE z)
                 z->p->p->color = RED;
                 z = z->p->p;
             }
-            /* case 2 \*/
+            /* case 2 */
             else if (z == z->p->left)
             {
                 z = z->p;
                 RIGHT-ROTATE(T, z->p);
             }
-            /* case 3 \*/
+            /* case 3 */
             else
             {
                 z->p->color = BLACK;
@@ -177,3 +181,209 @@ void RB-INSERT-FIXUP(RBTREE T, RBNODE z)
     }    
 }    
 ```
+
+### 分析RB-INSERT-FIXUP过程
+
+- while循环在每次迭代的开头都保持下列3个部分的不变式
+    1. 结点z是红结点。
+    2. 如果z.p是根结点，则z.p是黑结点。
+    3. 如果有任何红黑性质被破坏，则至多只有一条性质被破坏，或是性质2（根色性），或是性质4（红子性）。如果性质2被破坏，其原因为z是根结点且是红结点。如果性质4被破坏，其原因为z和z.p都是红结点。
+- 3部分处理红黑性质的破坏，相比1部分和2部分来说，更是RB-INSERT-FIXUP保持红黑性质的中心内容。
+
+- **初始化**：
+    1. 当调用RB-INSERT-FIXUP时，z是新增的红结点。
+    2. 如果z.p是根，那么z.p开始是黑色的，且在调用RB-INSERT-FIXUP之前保持不变。
+    3. 注意到在调用RB-INSERT-FIXUP时，性质1（二色性）、性质3（叶色性）和性质5（黑高性）成立。
+    4. 如果违反了性质2（根色性），则红色结点一定是新增结点z，它是树中唯一的内部结点。因为z的父结点和两个子结点都是黑色的哨兵，没有违反性质4（红子性）。如果违反了性质4，则由于z的子结点是黑色哨兵，且该树在z加入之前没有其他性质的违反，所以违反必然是因为z和z.p都是红色的。
+- **终止**：循环终止是因为z.p是黑色的。（如果z是根结点，那么z.p是黑色哨兵T.nil。）这样，树在循环终止时没有违反性质4.根据循环不变式，唯一可能不成立的是性质2。最后一行恢复这个性质。故所有性质都成立。
+- **保持**：需要考虑while循环中的6中情况，而其中三种与另外三种是对称的。这取决于z.p是z.p.p的left还是right。根据循环不变式的第2点，如果z.p是根结点，那么z.p是黑色的，可知结点z.p.p存在。因为只有在z.p是红色时才进入一次循环迭代，所以z.p不可能是根结点。因此，z.p.p存在。情况1和情况2、3的区别在于z的叔结点（z.p.p.right或z.p.p.left，即y）的颜色不同。下面以z.p是z.p.p的left（对称情况一）为例子。
+    1. **情况一：z的叔结点y是红色的**。因为z、z.p、y都是红色的，而z.p.p是黑色的。将z.p和y着为黑色，z.p.p着为红色，指针z上移两层到原来的z.p.p。
+    2. **情况二：z的叔结点y是黑色的且z是一个右孩子**。结点z是它的父结点的右孩子，可以使用一个左旋来将此情形变为情况三，此时结点z（原来的z.p）为左孩子。因为z和z.p都是红色的，所以该旋转对结点的黑高和性质5都无影响。
+    3. **情况三：z的叔结点y是黑色的且z是一个左孩子**。改变某些结点的颜色并做一次右旋，以保持性质5。这样，由于不再有两个连续的红色结点，所有的处理到此完毕。因为此时z.p是黑色的，所以无需再执行一次while循环。
+
+### 运行时间
+
+由于一棵有n个结点的红黑树的高度为O(lgn)，因此RB-INSERT的插入部分花费O(lgn)时间。在RB-INSERT-FIXUP中，仅当情况一发声，然后指针z沿着树上升2层，while循环才会重复执行。所以while循环可能被执行的总次数为O(lgn)。因此共花费O(lgn)时间。此外，该程序所做的旋转从不超过2次，因为只要执行了情况二或情况3，while循环就结束了。
+
+## 删除
+
+- 红黑树上的删除操作花费O(lgn)时间。
+- 首先需要特别设计一个供TREE-DELETE调用的子过程RB-TRANSPLANT，并将其应用到红黑树上。RB-TRANSPLANT(T, u, v)用v替换u，改变这二者的父树关系，但没有改变子树关系。
+
+```c
+void RB-TRANSPLANT(RBTREE T, RBNODE u, RBNODE v)
+{
+    if (u->p == T->nil)
+        T->root = v;
+    else if (u == u->p->left)
+        u->p->left = v;
+    else
+        u->p->right = v;
+    v-> = u->p;
+}
+```
+
+- RB-DELETE过程和二叉搜索树删除过程相似，但是多出了修复红黑性质的代码。
+- 当想要删除结点z，且此时z的子结点少于2个时，z从树中删除，并让y成为z。
+- 当z有两个子结点时，y是z的后继，并且y将移至树中的z位置，将x移至y原来的位置。同时记住y的颜色和x的踪迹。
+- 删除结点z之后，通过调用辅助过程RB-DELETE-FIXUP来恢复红黑性质。
+
+```c
+void RB-DELETE(RBTREE T, RBNODE z)
+{
+    RBNODE x, y;
+
+    y = z;
+    bool y-original-color = y->color;
+    if (z->left == T.nil)
+    {
+        x = z->right;
+        RB-TRANSPLANT(T, z, z->right);
+    }
+    else if (z->right == T.nil)
+    {
+        x = z->left;
+        RB-TRANSPLANT(T, z, z->left);
+    }
+    else
+    {
+        y = TREE-MINIMUM(z->right);
+        y-original-color = y->color;
+        x = y->right;
+        if (y->p == z)
+            x->p = y;
+        else
+        {
+            RB-TRANSPLANT(T, y, y->right);
+            y->right = z->right;
+            y->right->p = y;
+        }
+        RB-TRANSPLANT(T, z, y);
+        y->left = z->left;
+        y->left->p = y;
+        y->color = z->color;
+    }
+    free(z);
+
+    if (y-original-color == BLACK)
+        RB-DELETE-FIXUP(T, x);
+}
+```
+
+- 如果y是红色（y-original-color == RED），当y被删除或移动时，红黑性质仍然保持，原因如下：
+    1. 树中的黑高没有变化。
+    2. 不存在两个相邻的红结点。如果y是红色，则x一定是黑色，因此用x替代y不可能使两个红结点相邻。
+    3. 如果y是红色，就不可能是根结点，所以根结点依旧是黑色。
+- 如果y是黑色的，则会产生三个问题，可以通过调用RB-DELETE-FIXUP进行补救：
+    1. 如果y是原来的根结点，则y的一个红色的孩子成为新的根结点，这就违反了性质2（根色性）。
+    2. 如果x和x.p是红色的，则违反了性质4（红子性）。
+    3. 在树中移动y将导致先前包含y的任何简单路径上黑结点个数少1.因此，y的任何祖先都不满足性质5（黑高性）。改正这一问题的办法是将现在占有y原来位置的结点x视为还有一重额外的黑色。在这种假设下，性质5成立。所以现在的结点x是双重黑色或者红黑色，分别为黑高贡献了2或1.x.color属性仍然是RED（红黑色）或者BLACK（双重黑色）。换句话说，结点额外的黑色是针对x结点的，而不是反映在它的color属性上的。
+
+```c
+void RB-DELETE-FIXUP(RBTREE T, RBNODE x)
+{
+    RBNODE w;
+
+    while (x != T.root && x->color == BLACK)
+    {
+
+        /* 对称情况一 */
+        if (x == x->p->left)
+        {
+            w = x->p->right;
+            /* case 1 */
+            if (w->color == RED)
+            {
+                w->color = BLACK;
+                x->p->color = RED;
+                LEFT-ROTATE(T, x->p);
+                w = x->p->right;
+            }
+            else
+            {
+                /* case 2 */
+                if (w->left->color == BLACK && w->right->color == BLACK)
+                {
+                    w->color = RED;
+                    x = x->p;
+                }
+                /* case 3 */
+                else if (w->right->color == BLACK)
+                {
+                    w->left->color = BLACK;
+                    w->color = RED;
+                    RIGHT-ROTATE(T, w);
+                    w = x->p->right;
+                }
+                /* case 4 */
+                else
+                {
+                    w->color = x->p->color;
+                    x->p->color = BLACK;
+                    w->right->color = BLACK;
+                    LEFT-ROTATE(T, x->p);
+                    x = T->root;
+                }
+            }
+        }
+
+        /* 对称情况二 */
+        else
+        {
+            w = x->p->left;
+            /* case 1 */
+            if (w->color == RED)
+            {
+                w->color = BLACK;
+                x->p->color = RED;
+                LEFT-ROTATE(T, x->p);
+                w = x->p->left;
+            }
+            else
+            {
+                /* case 2 */
+                if (w->left->color == BLACK && w->right->color == BLACK)
+                {
+                    w->color = RED;
+                    x = x->p;
+                }
+                /* case 3 */
+                else if (w->left->color == BLACK)
+                {
+                    w->right->color = BLACK;
+                    w->color = RED;
+                    LEFT-ROTATE(T, w);
+                    w = x->p->right;
+                }
+                /* case 4 */
+                else
+                {
+                    w->color = x->p->color;
+                    x->p->color = BLACK;
+                    w->left->color = BLACK;
+                    RIGHT-ROTATE(T, x->p);
+                    x = T->root;
+                }
+            }
+
+        }
+
+        x->color = BLACK;
+    }
+}
+```
+
+- 过程RB-DELETE-FIXUP恢复性质1、2、4，此处着重说明如何恢复性质1（二色性）。while循环的目标是将额外的黑色沿树上移，直到：
+    1. x指向红黑结点，此时最后一行代码将x着为黑色。
+    2. x指向根结点，此时可以简单地“移除”（忽略）额外的黑色。
+    3. 执行适当的旋转和重新着色，退出循环。
+- 在while循环中，x总是指向一个具有双重黑色的非根结点。**有两种对称情况，分别是x为左孩子和x为右孩子**。保持指针w指向x的兄弟。由于结点x是双重黑色的，故w不可能是T.nil（否则从x.p到w的黑高就会小于从x.p到x的黑高）。
+- 一个对称情况中有4中情况，关键思想是在每种情况中，从子树的根（包括根）到每棵子树α和β（x的子树）、γ和δ（w的left的子树）、ε和ζ（w的right的子树）之间的黑结点个数（包括x的额外黑色）并不被变换改变（不是相等）。因此，如果性质5（黑高性）在变换之前成立，那么变换之后也成立。下面以对称情况一（x为左孩子）为例。
+    1. **情况1：x的兄弟结点w是红色的**。改变w和x.p的颜色，然后对x.p做一次左旋而不违反任何红黑性质。之后x的新兄弟w是之前w的某个子结点，**颜色为黑色**。这样就将情况1转换为情况2、3或4处理。当结点w为黑色时，属于情况2、3和4，这些情况是由w的子结点的颜色来区分的。
+    2. **情况2：x的兄弟结点w是黑色的，而且w的两个子结点都是黑色的**。因为w也是黑色的，所以从x和w上去掉一重黑色，使得x只有一重黑色而w为红色。为了补偿从x和w中去掉的一重黑色，在原来是红色或黑色的x.p上新增一重额外的黑色。**通过将x.p作为新结点x来重复while循环**。注意到，如果新结点x是红黑色的（即原来的x.p是红色的），那么其color属性为RED，while循环终止，并在最后将x着为黑色。
+    3. **情况3：x的兄弟结点w是黑色的，w的左孩子是红色的，w的右孩子是黑色的**。交换w和w.left的颜色，然后对w进行右旋，x不变。现在x的新兄弟w是一个有红色右孩子的黑色结点，这样就转换到情况4.
+    4. **情况4：x的兄弟结点w是黑色的，且w的右孩子是红色的（左孩子可以为红色或黑色）**。修改某些结点的颜色并对x.p做一次左旋，可以去掉x的额外黑色。将x特地设置为根，从而结束while循环。
+
+### 运行时间
+
+不掉用RB-DELETE-FIXUP时时间代价为O(lgn)。在RB-DELETE-FIXUP中，情况1、3和4在各执行常数次着色和至多3次旋转后终止。情况2是while循环可以重复的唯一情况，x沿树上升至多O(lgn)次，且无旋转。所以总时间为O(lgn)。
