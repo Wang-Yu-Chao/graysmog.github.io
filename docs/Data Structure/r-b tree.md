@@ -28,7 +28,7 @@
 
 ```c
 /* 头文件 */
-\#ifndef _RBTree_H
+#ifndef _RBTree_H
 #define RED 1
 #define BLACK 0
 
