@@ -62,11 +62,11 @@ The problem with Shell's increments is that pairs of increments are not necessar
 
 ### Hibbard's increment
 
-Hibbard's increment gives better results in practice. His increment are of the form 1, 3, 7, ..., 2<sup>k-1</sup>.  The key difference is that consecutive increments have no common factors. The worst-case running time of Shellsort using Hibbard's increment is O(N<sup>3/2</sup>).
+Hibbard's increment gives better results in practice. His increment are of the form 1, 3, 7, ..., <a href="http://www.codecogs.com/eqnedit.php?latex=2^{k-1}" target="_blank"><img src="http://latex.codecogs.com/gif.latex?2^{k-1}" title="2^{k-1}" /></a>.  The key difference is that consecutive increments have no common factors. The worst-case running time of Shellsort using Hibbard's increment is O(<a href="http://www.codecogs.com/eqnedit.php?latex=N^{\frac{3}{2}}" target="_blank"><img src="http://latex.codecogs.com/gif.latex?N^{\frac{3}{2}}" title="N^{\frac{3}{2}}" /></a>).
 
 ### Sedgwick's increment
 
-Sedgewick has proposed several increment sequences that give an O(N<sup>4/3</sup>) worst-case running time. The average running time is conjectured to be O(N<sup>7/6</sup>). The best of these is the sequence {1, 5, 19, 41, 109, ...}, in which the terms are either of the form 9 * 4<sup>i</sup> - 9 * 2<sup>i</sup> + 1 or 4<sup>i</sup> - 3 * 2<sup>i</sup> + 1.
+Sedgewick has proposed several increment sequences that give an O(<a href="http://www.codecogs.com/eqnedit.php?latex=N^{\frac{4}{3}}" target="_blank"><img src="http://latex.codecogs.com/gif.latex?N^{\frac{4}{3}}" title="N^{\frac{4}{3}}" /></a>) worst-case running time. The average running time is conjectured to be O(<a href="http://www.codecogs.com/eqnedit.php?latex=N^{\frac{7}{6}}" target="_blank"><img src="http://latex.codecogs.com/gif.latex?N^{\frac{7}{6}}" title="N^{\frac{7}{6}}" /></a>). The best of these is the sequence {1, 5, 19, 41, 109, ...}, in which the terms are either of the form <a href="http://www.codecogs.com/eqnedit.php?latex=9&space;\times&space;4^{i}&space;-&space;9&space;\times&space;2^{i}&space;&plus;&space;1" target="_blank"><img src="http://latex.codecogs.com/gif.latex?9&space;\times&space;4^{i}&space;-&space;9&space;\times&space;2^{i}&space;&plus;&space;1" title="9 \times 4^{i} - 9 \times 2^{i} + 1" /></a> or <a href="http://www.codecogs.com/eqnedit.php?latex=4^{i}&space;-&space;3&space;\times&space;2^{i}&space;&plus;&space;1" target="_blank"><img src="http://latex.codecogs.com/gif.latex?4^{i}&space;-&space;3&space;\times&space;2^{i}&space;&plus;&space;1" title="4^{i} - 3 \times 2^{i} + 1" /></a>.
 
 ## Heapsort
 
