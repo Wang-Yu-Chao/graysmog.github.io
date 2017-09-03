@@ -54,20 +54,3 @@ GraySmog's tech blog
 ## 小随笔 :P
 
 写着玩儿
-
-## 《算法导论》课后习题个人解答
-
-《算法导论》中一些有趣题目的答案，个人想法，不一定正确
-
-1. [第5章](/docs/CLRS/Chapter 5.md)
-
-## 编译原理
-
-从入门到放弃
-
-1. [概述](/docs/Compilers/intro.md)
-2. [词法分析器](/docs/Compilers/lexical analysis.md)
-
-## 小随笔 :P
-
-写着玩儿
