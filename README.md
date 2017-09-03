@@ -34,7 +34,7 @@ GraySmog's tech blog
 
 1. [排序](/docs/Data-Structure/sorting.md)
 
-## C++
+## C++ Primer
 
 9. [顺序容器](/docs/CPP/sequential-container.md)
 
