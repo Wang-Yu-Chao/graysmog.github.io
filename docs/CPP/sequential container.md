@@ -223,4 +223,209 @@ names.assign(oldstyle.cbegin(), oldstyle.cend());   // 正确：可以将const c
 - insert成员提供了更一般的添加功能，它允许我们在容器中任意位置插入0个或多个元素。vector、deque、list和string都支持insert成员。forward_list提供了特殊版本的insert成员。
 - 每个insert函数都接受一个迭代器作为其第一个参数。由于迭代器可能指向容器尾部之后不存在的元素的位置，而且在容器开始位置插入元素是很有用的功能，所以insert函数将元素插入到迭代器所指定的位置**之前**。
 - 虽然某些容器不支持push_front操作（vector、string），但它们对于insert操作并无类似的限制（可以insert插入开始的位置），但可能很耗时。
-- 
+
+##### 插入范围内元素
+
+```CPP
+svec.insert(svec.end(), 10, "Anna");
+slist.insert(slist.end(), {"these", "words", "will", "go", "at", "the", "end"});
+```
+
+##### 使用insert的返回值
+
+- 通过使用insert的返回值，可以在容器中一个特定位置反复插入元素。
+
+```CPP
+list<string> lst;
+auto iter = lst.begin();
+while (cin >> word)
+    iter = lst.insert(iter, word);
+```
+
+##### 使用emplace操作
+
+- 新标准引入了三个新成员——emplace_front、emplace、emplace_back，这些操作构造而不是拷贝元素。这些操作分别对应push_front、insert、push_back。
+- 当调用push或insert成员函数时，我们将元素类型的对象传递给它们。而当调用一个emplace成员函数时，则是将参数传递给元素类型的构造函数。emplace成员使用这些参数在容器管理的内存空间中直接构造元素。
+```CPP
+// 在c的末尾构造一个Sales_data对象
+c.emplace_back("345－93247342", 25, 15.99);
+// 相同效果
+c.push_back(Sales_data("345－93247342", 25, 15.99));
+```
+- 在调用emplace_back时，会在容器管理的内存空间中直接创建对象。而调用push_back则会创建一个局部临时对象，并将其压入容器中。
+- emplace函数的参数根据元素类型而变化，参数必须于元素类型的构造函数相匹配。
+
+### 访问元素
+
+在顺序容器中访问元素的操作 | 特点
+:----- | :-----:
+c.back() |  返回c中尾元素的引用。若c为空，函数行为未定义
+c.front() | 返回c中首元素的引用。若c为空，函数行为未定义
+c[n] | 返回c中下标为n的元素的引用。n是一个无符号整数，若，n>=c.size()，函数行为未定义
+c.at(n) | 返回下标为n的元素的引用。如果下标越界，则抛出一out_of_range异常。
+
+- at和下标操作只适用于string、vector、deque和array。（不适用于list、forward_list）
+- back不适用于forward_list。
+- 包括array在哪的每个顺序容器都有一个front成员函数，而除forward_list之外的所有顺序容器都有一个back成员函数。这两个操作分别返回**首元素**和**尾元素**的**引用**。
+```CPP
+if (!c.empty())
+{
+    auto val = \*c.begin(), val2 = c.front();   // 两种获取对首元素的引用的方式
+    auto last = c.end();
+    auto val3 = \*(--last);
+    auto val4 = c.back();                       // 两种获取对尾元素的引用的方式（不适用于forward_list）
+}
+```
+- 这个程序有两点注意事项：迭代器end指向的是尾后元素，为获取尾元素，必须递减该迭代器。另一个是，在调用front和back之前，要确保c非空。如果容器为空，if中操作的行为将是未定义的。
+
+##### 下标操作和安全的随机访问
+
+- 使用越界的下标是一种严重的程序设计错误，而且编译器并不检查这种错误。
+- 如果希望确保下表是合法的，可以使用at成员函数。at成员函数类似下标运算符，但如果下标越界，at会抛出一个out_of_range异常。
+
+### 删除元素
+
+顺序容器的删除操作 | 特点
+:--- | :----:
+`c.pop_back()` | 删除c中尾元素。若c为空，则函数行为未定义。函数返回void
+`c.pop_front()` | 删除c中首元素。若c为空，则函数行为未定义。函数返回void
+`c.erase(p)`<br>`c.erase(b,e)` | 删除迭代器p所指定的元素／迭代器b和e所指定范围内的元素，返回一个指向**被删元素之后**元素的迭代器，若p指向尾元素，则返回尾后迭代器。若p是尾后迭代器，则函数行为未定义
+`c.clear()` | 删除c中的所有元素。返回void
+
+- 这些操作会改变容器的大小，所以不适用于array。
+- forward_list有特殊版本的erase。
+- forward_list不支持pop_back；vector和string不支持pop_front。
+- 删除deque中除首尾位置之外的任何元素都会使所有迭代器、引用和指针失效。指向vector或string中删除点之后位置的迭代器、引用和指针都会失效。
+
+##### pop_front和pop_back成员函数
+
+- 这些操作返回void。如果你需要弹出的元素的值，就必须在执行弹出操作之前保存它。
+```CPP
+while (!ilist.empty())
+{
+    process(ilist.front());     // 对ilist的首元素进行一些处理
+    ilist.pop_front();          // 完成处理后删除首元素
+}
+```
+
+##### 从容器内部删除一个元素
+
+- 成员函数erase从容器中指定位置删除元素。我们可以删除由一个迭代器指定的单个元素，也可以删除由一对迭代器指定的范围内的所有元素。两种形式的erase都返回指向被删除的（最后一个）元素**之后**位置的迭代器。
+- 下面的程序循环删除一个list中的所有奇数元素。
+```CPP
+list<int> lst = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+auto it = lst.begin()
+while (it != 1st.end())
+    if (\*it % 2)
+        it = lst.erase(it);     // 指向之后的位置，不需要递增it
+    else
+        ++it;
+```
+
+##### 删除多个元素
+
+```CPP
+elem1 = slist.erase(elem1, elem2);      // 调用后， elem1 === elem2
+```
+- 迭代器elem1指向要删除的第一个元素，elem2指向要删除的最后一个元素之后的位置。
+```CPP
+slist.clear();                              // 删除容器中所有元素
+slist.erase(slist.begin(), slist.end());    // 等价调用
+```
+
+### 特殊的forward_list操作
+
+- forward_list并未定义insert、emplace和erase，而是定义了名为insert_after、emplace_after和erase_after的操作。为了删除elem2，应该用指向其之前的elem1的迭代器调用erase_after。因为在一个单向链表中，没有简单的方法来获取一个元素的前驱，所以forward_list中添加或删除元素的操作是通过改变给定元素之后的元素来完成的。
+- 为了支持这些操作，forward_list也定义了before_begin，它返回一个首前（off-the-beginning）迭代器。这个迭代器允许我们在链表首元素之前并不存在的元素“之后”添加或删除元素。
+
+在forward_list中插入或删除元素的操作 | 特点
+:---- | :-----:
+`lst.before_begin()`<br>`lst.cbefore_begin()` | 返回首前迭代器。此迭代器不能解引用。cbefore_begin()返回一个const_iterator
+`lst.insert_after(p,t)`<br>`lst.insert_after(p,n,t)`<br>`lst.insert_after(p,b,e)`<br>`lst.insert_after(p,il)` | 在迭代器p之后的位置插入元素，t是一个对象，n是数量。b和e是表示范围的一对迭代器（b和e不能指向lst内）。il是一个花括号列表。返回一个指向最后一个插入元素的迭代器。如果范围为空，则返回p。若p为尾后迭代器，则函数行为未定义
+`lst.emplace_after(p,args)` | 使用args在p指定的位置之后创建一个元素。返回一个指向这个新元素的迭代器。若p为尾后迭代器，则函数行为未定义
+`lst.erase_after(p)`<br>`lst.erase_after(b,e)` | 删除p指向的位置之后的元素，或删除从b之后直到（但不包含）e之间的元素。返回一个指向被删元素之后元素的迭代器（或尾后迭代器）如果p指向lst的尾元素或者是尾后迭代器，则函数行为未定义。
+
+### 改变容器大小
+
+- 可以用resize来增大或缩小容器。array不支持resize。如果当前大小大于所要求的大小，容器后部的元素会被删除；如果当前大小小于新大小，会将新元素添加到容器后部
+- 如果resize缩小容器，则指向被删除元素的迭代器、引用和指针都会失效；对vector、string或deque进行resize可能导致迭代器、指针和引用失效。
+
+```CPP
+ilist<int> ilist(10, 42);   // 10个int，每个的值都是42
+ilist.resize(15);           // 将5个值为0的元素添加到ilist的末尾（默认初始化）
+ilist.resize(25, -1);       // 将10个值为-1的元素添加到ilist的末尾
+ilist.resize(5);            // 从ilist末尾删除20个元素
+```
+
+顺序容器大小操作 | 特点
+:---- | :----:
+`c.resize(n)` | 调整c的大小为n个元素
+`c.resize(n,t)` | 调整c的大小为n个元素，任何新添加的元素都初始化为值t
+
+### 容器操作可能使迭代器失效
+
+- 添加和删除操作可能会使指向容器元素的指针、引用或迭代器失效。在向容器添加元素后：
+    - 如果容器是vector或string，且存储空间被重新分配，则指向容器的迭代器、指针和引用都会失效。如果存储空间未重新分配，指向插入位置之前的元素的迭代器、指针和引用仍然有效，但指向插入位置之后元素的迭代器、指针和引用将会失效。
+    - 对于deque，插入到除首尾位置之外的任何位置都会导致迭代器、指针和引用失效。如果在首尾位置添加元素，迭代器会失效，但指向存在的元素的引用和指针不会失效。
+    - 对于list和forward_list，指向容器的迭代器、指针和引用仍然有效。
+- 建议：管理迭代器：当使用迭代器（或引用和指针）时，最小化要求迭代器必须保持有效的程序片段是一个好方法。每次改变容器的操作之后都正确地重新定位迭代器，这个建议对vector、string和deque尤为重要。
+
+##### 编写改变容器的循环程序
+
+- 如果循环调用的是insert或erase，那么更新迭代器很容易。这些操作都返回迭代器，可以用来更新。
+```CPP
+// 删除偶数元素，复制每个奇数元素
+vector<int> vi = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+auto iter = vi.begin();
+while (iter != vi.end())
+{
+    if (*iter % 2)
+    {
+        iter = vi.insert(iter, *iter);
+        iter += 2;                      // 跳过插入的元素（插到前面）和当前元素
+    }
+    else
+        iter = vi.erase(iter);          // 不应向前移动迭代器，因为iter指向被删元素之后的元素
+}
+```
+
+##### 不要保存end返回的迭代器
+
+- 当添加／删除vector或string的元素后，或在deque中首元素之外任何位置添加／删除元素后，原来end返回的迭代器总是会失效。因此，添加／删除元素的循环程序必须反复调用end，而不能在循环之前保存end返回的迭代器，一只当作容器末尾使用。通常C++标准库的实现中end()操作都很快，部分就是因为这个原因。
+```CPP
+auto begin = v.begin(), end = v.end();  // 保存尾迭代器是一个坏主意
+while (begin != end)    // 错误做法
+{
+    // ......
+}
+```
+
+## vector对象是如何增长的
+
+- 通常情况下，我们不必关心一个标准库类型是如何实现的，而只需关心它如何使用。然而，对于vector和string，其部分实现渗透到了接口中。
+- 如果每添加一个新元素，vector就执行一次这样的内存分配和释放操作，性能会慢到不可接受。
+- vector和string的实现通常会分配比新的空间需求更大的内存空间。容器预留这些空间作为备用，可用来保存更多的新元素。这样，就不需要每次添加新元素都重新分配容器的内存空间了。
+
+##### 管理容量的成员函数
+
+- vector和string类型提供了一些成员函数，允许我们与它的实现中内存分配部分互动。capacity操作告诉我们容器在不扩张内存空间的情况下可以容纳多少个元素。reserve操作允许我们通知容器它应该准备保存多少个元素。
+
+容器大小管理操作 | 特点
+:---- | :-----:
+c.shrink_to_fit() | 将capacity()减少为与size()相同大小的请求
+c.capacity() | 不重新分配内存空间的话，c可以保存多少元素
+c.reserve() | 分配至少能容纳n个元素的内存空间
+
+- shrink_to_fit只适用于vector、string和deque。（不适用于list、forward_list和array）
+- capacity和reserve只适用于vector和string
+- reserve并不改变容器中元素的数量，仅影响vector预先分配多大的内存空间。
+- 调用reserve永远也不会减少容器**占用的**（仅影响**预留的**）内存空间。类似的，resize成员函数只改变容器中元素的数目，而不是容器的容量。我们同样不能使用resize来减少容器预留的内存空间。
+- shrink_to_fit是一个请求，具体的实现可以选择忽略此请求，不保证退回内存空间。
+
+##### capacity和size
+
+- 理解capacity和size的区别非常重要。容器的size是指它已经保存的元素的数目；而capacity则是在不分配新的内存空间的前提下它最多可以保存多少元素。
+- 实际上，只要没有操作需求超出vector的容量，vector就不能重新分配内存空间。内存分配的原则是：只有当迫不得已时才可以分配新的内存空间。
+- 不同的分配策略都应遵守高效的原则。就是说，通过在一个初始为空的vector上调用n次push_back来创建一个n个元素的vector，所花费的时间不能超过n的常数倍。
+
+## 额外的string操作
