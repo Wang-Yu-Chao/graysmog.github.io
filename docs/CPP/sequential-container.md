@@ -429,3 +429,69 @@ c.reserve() | 分配至少能容纳n个元素的内存空间
 - 不同的分配策略都应遵守高效的原则。就是说，通过在一个初始为空的vector上调用n次push_back来创建一个n个元素的vector，所花费的时间不能超过n的常数倍。
 
 ## 额外的string操作
+
+- string类型还提供了一些额外的操作。这些操作大部分：
+    1. 提供string类和C风格字符数组之间的相互转换；
+    2. 增加了允许我们用下标代替迭代器的版本。
+
+##### 构造string的其它方法
+
+已知的构造string的方法 ｜ 特点
+`string s1` | 默认初始化，s1是一个空串
+`string s2(s1)`<br>`string s2 = s1` | s2是s1的副本
+`string s3("value")`<br>`string s3 = "value"` | s3是字面值"value"的副本
+`string s4(n, 'c')` | 把s4初始化为由连续n个字符c组成的字符串
+
+
+构造string的其它方法 | 特点
+:---- | :-----:
+`string s(cp,n)` | s是cp指向的数组中前n个字符的拷贝。此数组至少应该包含n个字符
+`string s(s2,pos2)` | s是string s2从下标pos2开始的字符的拷贝。若pos2>s2.size()，构造函数的行为未定义
+`string s(s2,pos2,len2)` | s是string s2从下标pos2开始len2个字符的拷贝。不管len2的值是多少，构造函数至多拷贝s2.size()-pos2个字符（拷贝到string末尾）
+
+- string构造函数接受string或const char*参数时，可接受（可选的）指定拷贝多少个字符的参数；接受string参数时，还可以给定一个下标来指出从哪里开始拷贝（const char*通过增加第一个参数，移动指针来实现）。
+```CPP
+// 接受const char*的构造函数
+const char *cp = "Hello World!!!";  // 以空字符结束的数组
+char noNull[] = {'H', 'i'};         // 不是以空字符结束的数组
+string s1(cp ＋ 6, 5);              // 从cp[6]开始拷贝5个字符
+string s2(noNull);                  // 未定义：noNull不是以空字符结束
+string s3(noNull, 2);               // 靠背两个字符
+// 接受string的构造函数
+string s4(s1, 6);                   // 从s1[6]开始拷贝，直至s1末尾
+string s5(s1, 6, 5);                // 从s1[6]开始拷贝5个字符
+string s6(s1, 6, 20);               // 正确，只拷贝到s1末尾
+string s7(s1, 16);                  // 抛出一个out_of_range异常
+```
+
+##### substr操作
+
+- substr操作返回一个string，它是原始string的一部分或全部的拷贝。可以传递给substr一个可选的开始位置和计数值。
+```CPP
+string s("hello world");
+string s2 = s.substr(6);        // 从s[6]开始拷贝到s末尾并返回
+string s3 = s.substr(6, 11);    // 从s[6]开始拷贝11个字符并返回
+```
+- 如果开始位置加上计数位置大于string的大小，则substr会调整计数值，只拷贝到string的末尾。
+
+### 改变string的其它方法
+
+- string类型支持顺序容器的赋值运算符以及assign、insert和erase操作。除此之外，它还定义了额外的insert和erase版本，即接受下标的版本。下标指出了**开始删除**的位置，或是insert到**给定值之前**的位置。
+```CPP
+s.insert(s.size(), 5, '!');     // 在s末尾插入5个感叹号。在此处用下标s.size()，而不是迭代器
+s.erase(s.size()-5, 5);         // 从s删除最后5个字符。
+```
+- 标准库string还提供了接受C风格字符数组的insert和assign版本。例如，我们可以将以空字符结尾的字符数组insert到或assign给一个string。
+- 接下来在s上调用insert，意图是将字符插入到s[size()]处（不存在的）元素之前的位置。
+```CPP
+const char *cp = "Stately, plump Back";
+s.assign(cp, 7);                // s == "Stately"
+s.insert(s.size(), cp + 7);     // s == "Stately, plump Back"
+```
+- 也可以指定将来自其他string或子字符串的字符插入到当前string中或赋予当前string。
+```CPP
+string s1 = "some string", s2 = "some other string";
+s.insert(0, s2, 0, s2.size());  // 在s[0]之前插入s2中s2[0]开始的s2.size()个字符
+```
+
+##### append和replace函数

@@ -33,6 +33,7 @@
 
 ## C++ Primer
 
+7. [类](/docs/CPP/class.md)
 9. [顺序容器](/docs/CPP/sequential-container.md)
 
 ## 《算法导论》课后习题个人解答
