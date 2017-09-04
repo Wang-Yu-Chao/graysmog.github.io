@@ -1,3 +1,14 @@
+# ---------------- #
+#   Main Configs   #
+# ---------------- #
 theme: jekyll-theme-slate
 title: GraySmog的个人主页
 description: 技术文章、个人随笔 :P
+
+# ---------------- #
+#      Jekyll      #
+# ---------------- #
+markdown: kramdown
+kramdown:
+    input: GFM
+highlighter: rouge

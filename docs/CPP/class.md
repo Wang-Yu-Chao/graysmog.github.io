@@ -46,7 +46,10 @@ std::istream &read(std::istream&, Sales_data&);
 std::string isbn() const { return this->bookNo };   // this指向对象的指针，所以用->运算符
 ```
 - 因为this的目的总是指向“这个”对象（每个对象的this都是固定地指向自己），所以this是一个**常量指针**，不允许改变this中保存的地址。
-- 难点：**指向常量的指针**（pointer to const）和**常量指针**（const pointer）：
+
+###### 补充内容
+
+**指向常量的指针**（pointer to const）和**常量指针**（const pointer）：
     - 指向常量的指针不能用于改变其所指向的对象的值，想要获取存放常量对象的地址，只能使用指向常量的指针。
 ```CPP
 const double pi = 3.14;     // pi是一个常量，不能改变
