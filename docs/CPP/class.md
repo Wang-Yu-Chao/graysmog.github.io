@@ -74,15 +74,6 @@ std::string isbn() const { return this->bookNo };   // this指向对象的指针
 ```
 - 因为this的目的总是指向“这个”对象（每个对象的this都是固定地指向自己），所以this是一个**常量指针**，不允许改变this中保存的地址。
 
-##### const成员函数
-
-- isbn函数的另一个关键之处是紧随参数列表之后的const关键字，这里，const的作用是修改隐式this指针的类型。
-- 默认情况下，this的类型是**指向非常量的类类型**的**常量指针**。例如在Sales_data成员函数中，this的类型是Sales_data \*const。这意味着（在默认情况下）我们不能把this从一个非常量绑定到一个常量对象上。这一情况就使得我们不能在一个常量对象上调用普通的成员函数。
-- C++语言的做事发允许把const关键字放在成员
-
-
-
-
 ###### 补充内容：**指向常量的指针**（pointer to const）和**常量指针**（const pointer）
 - 指向常量的指针不能用于改变其所指向的对象的值，想要获取存放常量对象的地址，只能使用指向常量的指针。
 ```CPP
@@ -98,6 +89,53 @@ int *const curErr = &errNumb;   // curErr一直指向errNumb
 const double pi = 3.14;
 const double *const pip = &pi;  // pip是一个指向常量对象的常量指针。
 ```
+
+##### const成员函数／常量成员函数
+
+- isbn函数的另一个关键之处是紧随参数列表之后的const关键字，这里，const的作用是修改隐式this指针的类型。
+- 默认情况下，this的类型是**指向非常量的类类型**的**常量指针**。例如在Sales_data成员函数中，this的类型是Sales_data \*const。这意味着（在默认情况下）我们不能把this从一个非常量绑定到一个常量对象上。这一情况就使得我们不能在一个常量对象上调用普通的成员函数。
+- C++语言的做法是允许把const关键字放在成员函数的参数列表之后，此时，紧跟在参数列表后面的const表示this是一个指向常量的指针。像这样使用const的成员函数被称作**常量成员函数**。因为this是指向常量的指针，所以常量成员函数不能改变调用它的对象的内容。
+- 可以把isbn的函数想象成如下的形式：
+```CPP
+// 伪代码，说明隐式的this指针是如何使用的。下面的代码是非法的
+// 此处this是一个指向常量的指针，因为isbn是一个常量成员函数
+std::string Sales_data::isbn(const Sales_data *const this)
+{ return this->isbn; }
+```
+- 这里，isbn可以读取它的对象的数据成员，但不能写入新值。
+- 常量对象，以及常量对象的引用或指针都只能调用常量成员函数。
+
+##### 类作用域和成员函数
+
+- 类本身就是一个作用域。类的成员函数的定义嵌套在类的作用域之内。
+- 但是即使数据成员（如bookNo）定义在成员函数（如isbn）之后，成员函数依然可以使用数据成员。编译器分两部处理类：首先编译成员的声明，然后才轮到成员函数体。
+
+##### 在类的外部定义成员函数
+
+- 若在类的外部定义成员函数，函数定义必须和声明匹配。如果成员被声明为常量成员函数，那么它的定义也必须在参数列表后明确指定const属性。同时，类外部定义的成员的名字必须包含它所属的类名，如：
+```CPP
+double Sales_data::average_price() const
+{
+    if (units_sold)
+        return revenue / units_sold;
+    else
+        return 0;
+}
+```
+
+##### 定义一个返回this对象的函数
+
+- 函数combine的设计初衷类似于复合函数赋值运算符+=，调用该函数的对象代表的是赋值运算符左侧的运算对象，右侧运算对象则通过显示的实参被传入函数：
+```CPP
+Sales_data& Sales_data::combine(const Sales_data &rhs)
+{
+    units_sold += rhs.units_sold;
+    revenue += rhs.revenue;
+    return \*this;
+}
+```
+- return语句解引用this指针以获得执行该函数的对象。
+- 内置的赋值运算符把它的左侧运算对象当作左值返回，因此为了保持一致，combine函数必须返回引用类型（Sales_data&）。
 
 ### 定义类相关的非成员函数
 
