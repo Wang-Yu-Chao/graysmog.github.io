@@ -74,7 +74,7 @@ auto it2 = a.cbegin();      // it2是const_iterator
 
 ### 容器定义和初始化
 
-容器的构造函数 | 特点
+容器的构造函数 | 解释
 :----- | :-----:
 `C c` | 默认构造函数。如果C是一个array，则c中元素按默认方式初始化；否则c为空。
 `C c1(c2)`<br>`C c1=c2` | c1初始化为c2的拷贝。c1和c2必须是相同类型（相同的容器类型和元素类型，对于array类型，还必须是相同大小）
@@ -139,7 +139,7 @@ array<int, 5> copy = digits;    // 正确：只要类型匹配（大小和元素
 
 ### 赋值和swap
 
-容器赋值运算语句 | 特点
+容器赋值运算语句 | 解释
 :---- | :-----:
 `c1=c2` | 将c1中的元素替换为c2中元素的拷贝
 `c={a,b,c...}` | 将c1中元素替换为初始化列表中元素的拷贝（array不适用）
@@ -193,7 +193,7 @@ names.assign(oldstyle.cbegin(), oldstyle.cend());   // 正确：可以将const c
 
 ### 向顺序容器添加元素
 
-向顺序容器添加元素的语句 | 特点
+向顺序容器添加元素的语句 | 解释
 :--- | :---:
 `c.push_back(t)`<br>`c.emplace_back(args)` | 在c的尾部创建一个值为t或由args创建的元素。返回void
 `c.push_front(t)`<br>`c.emplace_front(args)` | 在c的头部创建一个值为t或由args创建的元素。返回void
@@ -257,12 +257,12 @@ c.push_back(Sales_data("345－93247342", 25, 15.99));
 
 ### 访问元素
 
-在顺序容器中访问元素的操作 | 特点
+在顺序容器中访问元素的操作 | 解释
 :----- | :-----:
-c.back() |  返回c中尾元素的引用。若c为空，函数行为未定义
-c.front() | 返回c中首元素的引用。若c为空，函数行为未定义
-c[n] | 返回c中下标为n的元素的引用。n是一个无符号整数，若，n>=c.size()，函数行为未定义
-c.at(n) | 返回下标为n的元素的引用。如果下标越界，则抛出一out_of_range异常。
+`c.back()` |  返回c中尾元素的引用。若c为空，函数行为未定义
+`c.front()` | 返回c中首元素的引用。若c为空，函数行为未定义
+`c[n]` | 返回c中下标为n的元素的引用。n是一个无符号整数，若，n>=c.size()，函数行为未定义
+`c.at(n)` | 返回下标为n的元素的引用。如果下标越界，则抛出一out_of_range异常。
 
 - at和下标操作只适用于string、vector、deque和array。（不适用于list、forward_list）
 - back不适用于forward_list。
@@ -285,7 +285,7 @@ if (!c.empty())
 
 ### 删除元素
 
-顺序容器的删除操作 | 特点
+顺序容器的删除操作 | 解释
 :--- | :----:
 `c.pop_back()` | 删除c中尾元素。若c为空，则函数行为未定义。函数返回void
 `c.pop_front()` | 删除c中首元素。若c为空，则函数行为未定义。函数返回void
@@ -338,7 +338,7 @@ slist.erase(slist.begin(), slist.end());    // 等价调用
 - forward_list并未定义insert、emplace和erase，而是定义了名为insert_after、emplace_after和erase_after的操作。为了删除elem2，应该用指向其之前的elem1的迭代器调用erase_after。因为在一个单向链表中，没有简单的方法来获取一个元素的前驱，所以forward_list中添加或删除元素的操作是通过改变给定元素之后的元素来完成的。
 - 为了支持这些操作，forward_list也定义了before_begin，它返回一个首前（off-the-beginning）迭代器。这个迭代器允许我们在链表首元素之前并不存在的元素“之后”添加或删除元素。
 
-在forward_list中插入或删除元素的操作 | 特点
+在forward_list中插入或删除元素的操作 | 解释
 :---- | :-----:
 `lst.before_begin()`<br>`lst.cbefore_begin()` | 返回首前迭代器。此迭代器不能解引用。cbefore_begin()返回一个const_iterator
 `lst.insert_after(p,t)`<br>`lst.insert_after(p,n,t)`<br>`lst.insert_after(p,b,e)`<br>`lst.insert_after(p,il)` | 在迭代器p之后的位置插入元素，t是一个对象，n是数量。b和e是表示范围的一对迭代器（b和e不能指向lst内）。il是一个花括号列表。返回一个指向最后一个插入元素的迭代器。如果范围为空，则返回p。若p为尾后迭代器，则函数行为未定义
@@ -357,7 +357,7 @@ ilist.resize(25, -1);       // 将10个值为-1的元素添加到ilist的末尾
 ilist.resize(5);            // 从ilist末尾删除20个元素
 ```
 
-顺序容器大小操作 | 特点
+顺序容器大小操作 | 解释
 :---- | :----:
 `c.resize(n)` | 调整c的大小为n个元素
 `c.resize(n,t)` | 调整c的大小为n个元素，任何新添加的元素都初始化为值t
@@ -410,11 +410,11 @@ while (begin != end)    // 错误做法
 
 - vector和string类型提供了一些成员函数，允许我们与它的实现中内存分配部分互动。capacity操作告诉我们容器在不扩张内存空间的情况下可以容纳多少个元素。reserve操作允许我们通知容器它应该准备保存多少个元素。
 
-容器大小管理操作 | 特点
+容器大小管理操作 | 解释
 :---- | :-----:
-c.shrink_to_fit() | 将capacity()减少为与size()相同大小的请求
-c.capacity() | 不重新分配内存空间的话，c可以保存多少元素
-c.reserve() | 分配至少能容纳n个元素的内存空间
+`c.shrink_to_fit()` | 将capacity()减少为与size()相同大小的请求
+`c.capacity()` | 不重新分配内存空间的话，c可以保存多少元素
+`c.reserve()` | 分配至少能容纳n个元素的内存空间
 
 - shrink_to_fit只适用于vector、string和deque。（不适用于list、forward_list和array）
 - capacity和reserve只适用于vector和string
@@ -436,14 +436,15 @@ c.reserve() | 分配至少能容纳n个元素的内存空间
 
 ##### 构造string的其它方法
 
-已知的构造string的方法 ｜ 特点
+已知的构造string的方法 | 解释
+:--- | :----:
 `string s1` | 默认初始化，s1是一个空串
 `string s2(s1)`<br>`string s2 = s1` | s2是s1的副本
 `string s3("value")`<br>`string s3 = "value"` | s3是字面值"value"的副本
 `string s4(n, 'c')` | 把s4初始化为由连续n个字符c组成的字符串
 
 
-构造string的其它方法 | 特点
+构造string的其它方法 | 解释
 :---- | :-----:
 `string s(cp,n)` | s是cp指向的数组中前n个字符的拷贝。此数组至少应该包含n个字符
 `string s(s2,pos2)` | s是string s2从下标pos2开始的字符的拷贝。若pos2>s2.size()，构造函数的行为未定义
@@ -466,7 +467,7 @@ string s7(s1, 16);                  // 抛出一个out_of_range异常
 
 ##### substr操作
 
-- substr操作返回一个string，它是原始string的一部分或全部的拷贝。可以传递给substr一个可选的开始位置和计数值。
+- substr操作返回一个string，它是原始string的一部分或全部的拷贝。可以传递给substr一个可选的开始位置和计数值。若无计数值，则拷贝到末尾。
 ```CPP
 string s("hello world");
 string s2 = s.substr(6);        // 从s[6]开始拷贝到s末尾并返回
@@ -494,4 +495,213 @@ string s1 = "some string", s2 = "some other string";
 s.insert(0, s2, 0, s2.size());  // 在s[0]之前插入s2中s2[0]开始的s2.size()个字符
 ```
 
-##### append和replace函数
+##### append和replace函数  
+
+- string类定义了两个额外的成员函数：append和replace，这两个函数可以改变string的内容。
+```CPP
+string s("C++ Primer"), s2 = s;
+s.insert(s.size(), " 4th Ed."); // 在末尾追加字符（串），s == "C++ Primer 4th Ed."
+s2.append(" 4th Ed.");          // 等价方法
+```
+- replace操作是调用erase和insert的一种简写形式。插入的文本和删除的文本长度可以不同。
+```CPP
+s.erase(11, 3);             // s == "C++ Primer Ed."
+s.insert(11, "5th");        // s == "C++ Primer 5th Ed."
+s2.replace(11, 3, "5th");   // 等价方法，在s2[11]位置处把3个字符替换为"5th"
+```
+
+##### 总结：修改string的操作
+
+修改string的操作 | 解释
+:----- | :-----:
+`s.insert(pos,args)` | 在pos之前插入args指定的字符。pos可以为一个下标或一个迭代器。接受下标的版本返回一个指向s的引用；接受迭代器的版本返回指向第一个插入字符的迭代器
+`s.erase(pos,len)` | 删除从位置pos开始的len个字符。如果len被省略，则删除从pos开始直至s末尾的所有字符。返回一个指向s的引用
+`s.assign(args)` | 将s中的字符替换为args指定的字符。返回一个指向s的引用
+`s.append(args)` | 将args追加到s。返回一个指向s的引用
+`s.replace(range,args)` | 删除s中范围range内的字符，替换为args指定的字符。range或者是一个下标和一个长度，或者是一对指向s的迭代器。返回一个指向s的引用
+
+*args可以是下列形式之一：append和assign可以使用所有形式。  
+str不能与s相同，迭代器b和e不能指向s。*
+
+args的形式 | 解释
+:---- | :----:
+`str` | 字符串str
+`str,pos,len` | str中从pos开始最多len个字
+`cp,len` | 从cp指向的字符数组的前（最多）len个字符
+`cp` | cp指向的以空字符结尾的字符数组
+`n,c` | n个字符c
+`b,e` | 迭代器b和e指定的范围内的字符
+`初始化列表` | 花括号包围的，以逗号分割的字符列表
+
+*replace和insert所允许的args形式依赖于range和pos是如何指定的。*  
+见书P324。
+
+##### 改变string的多种重载函数
+
+- 上表列出的append、assign、insert和replace函数有多个重载版本。
+- assign和append函数无须指定要替换string中的哪个部分：assign总是替换string中的所有内容，append总是将新字符追加到string末尾。
+- replace函数提供位置加范围、一对迭代器两种方式来指定删除元素的范围。insert函数提供一个下标或一个迭代器两种方式来指定插入点。
+- 指定要添加到string中的字符（insert、assign和replace），可以来自：另一个string、字符指针（指向字符数组）、字符列表、一个字符加一个计数值。
+
+### string搜索操作
+
+- string类提供了6个不同的搜索函数，每个函数都有4个重载版本。
+- 每个搜索操作都返回一个string::size_type值，表示匹配发生位置的下标。如果搜索失败，则返回一个名为string::npos的static成员。标准库将npos定义为一个const string::size_type类型，并初始化为-1。由于npos是一个unsigned类型，此初始值意味着npos等于任何string最大的可能大小。
+
+string搜索操作 | 解释
+:---- | :-----:
+`s.find(args)` | 查找s中args第一次出现的位置
+`s.rfind(args)` | 查找s中args最后一次出现的位置
+`s.find_first_of(args)` | 在s中查找args中任何一个字符第一次出现的位置
+`s.find_last_of(args)` | 在s中查找args中任何一个字符最后一个出现的位置
+`s.find_first_not_of(args)` | 在s中查找第一个不在args中的字符
+`s.find_last_not_of(args)` | 在s中查找最后一个不在args中的字符
+
+*args必须是以下形式之一*  
+*若不显式指定pos参数，pos默认为0*
+
+args形式 | 解释
+:---- | :-----:
+`c,pos` | 从s中位置pos开始查找字符c。
+`s2,pos` | 从s中位置pos开始查找字符串s2。
+`cp,pos` | 从s中位置pos开始查找指针cp指向的以空字符结尾的C风格字符串。
+`cp,pos,n` | 从s中位置pos开始查找指针cp指向的数组的前n个字符。
+
+```CPP
+string name("AnnaBelle");
+auto pos1 = name.find("Anna");  // pos1 == 0
+```
+- 搜索操作是大小写敏感的。
+
+```CPP
+string lowercase("AnnaBelle");
+auto pos2 = lowercase.find("Anna");  // pos2 = npos
+```
+```CPP
+string numbers("0123456789");
+string name("r2d2"), dept("03714p3");
+auto pos3 = name.find_first_of(numbers);     // pos3 == 1
+auto pos4 = dept.find_first_not_of(numbers); // pos4 == 5
+```
+
+##### 指定从哪里开始搜索
+
+```CPP
+// 每步循环查找name中下一个数
+string::size_type pos = 0;
+while ((pos = name.find_first_of(numbers, pos)) != string::npos)
+{
+    cout << "found number at index: " << pos << " element is " << name[pos] << endl;
+    ++pos;      // 移动到下一个字符
+}
+```
+- 注意，如果我们忽略了递增pos，循环就永远不会终止，一直查找到同一个数字。
+
+##### 逆向搜索
+
+- find系列操作都是由左至右搜索。而rfind则是由右至左搜索。rfind成员函数搜索最后一个匹配。
+- find_last_of搜索与给定的string中任何一个字符匹配的最后一个字符。
+- find_last_not_of搜索最后一个不出现在给定string中的字符。
+
+```CPP
+string river("Mississippi");
+auto last_pos = river.rfind("is");  // last_pos == 4
+```
+
+### compare函数
+
+- 除了关系运算符外，标准库string类型还提供了一组compare函数，这些函数与C标准库的strcmp函数很相似，根据s是等于、大于还是小于参数指定的字符串，s.compare返回0、正数或负数。
+
+s.compare的几种参数形式 | 解释
+:---- | :-----:
+`s2` | 比较s和s2
+`pos1,n1,s1` | 提取s中从pos1开始的n1个字符和s2比较
+`pos1,n1,s2,pos2,n2` | s中从pos1开始的n1个字符，和s2中从pos2开始的n2个字符比较
+`cp` | 比较s和以空字符结尾的字符数组cp
+`pos1,n1,cp` | s中从pos1开始的n1个字符，和cp比较
+`pos1,n1,cp,n2` | s中从pos1开始的n1个字符，和cp指向的地址开始的n2个字符比较
+
+### 数值转换
+
+- 字符串中常常包含表示数值的字符，但一般情况下，一个数的字符表示不同于其数值。C++11引入了多个函数，可实现数值数据和标准库string之间的转换。
+
+string和数值之间的转换 | 解释
+:----- | :-----:
+`to_string(val)` | 一组重载函数，返回数值val的string表示。val可以是任何算术类型
+`stoi(s,p,b)`<br>`stol(s,p,b)`<br>`stoul(s,p,b)`<br>`stoll(s,p,b)`<br>`stoull(s,p,b)` | 返回s的起始子串（表示整数内容）的数值，返回类型分表为int、long、unsigned long、long long、unsigned long long。b表示转换所用的基数（将字符串参数看作几进制），默认值为10。p是size_t指针，用来保存s中第一个非数值字符的下标，p默认为0，即函数不保存下标
+`stof(s,p)`<br>`stod(s,p)`<br>`stold(s,p)` | 返回s的起始子串（表示浮点数内容）的数值，返回值类型分别是float、double、long double。参数p的作用同上
+
+- 如果string不能转换为一个数值，这些函数抛出一个invalid_argument异常。如果转换得到的数值无法用任何类型来表示，则抛出一个out_of_range异常。
+
+```CPP
+int i = 42;
+string s = to_string(i);    // 整数-->字符串
+double d = stod(s);         // 字符串-->浮点数
+
+// 转换s中以数字开始的第一个子串
+string s2 = "pi = 3.14";
+double d2 = stod(s2.substr(s2.find_first_of("+-.0123456789")));     // d == 3.14
+```
+
+- string参数中的第一个非空白符必须是符号（+或-）或数字。它可以以0x或0X开头来表示十六进制数。对字符串到浮点值的转换，string参数也可以以小数点（.）开头，并可以包含e或E来表示指数部分。根据基数b不同，string参数可以包含字母字符。
+
+## 容器适配器
+
+- 除了顺序容器外，标准库还定义了三个顺序容器适配器：stack、queue和priority_queue。
+- 适配器（adaptor）是标准库中的一个通用概念。容器、迭代器和函数都由适配器。本质上，一个是适配器是一种机制，能使某种事物的行为看起来像另外一种事物一样。一个容器适配器接受一种已有的容器类型，使其行为看起来像一种不同的类型。
+- 例如，stack适配器接受一个顺序容器（除array或forward_list外），并使其操作看起来像一个stack一样。
+
+所有容器适配器都支持的操作和类型 | 解释
+:---- | :------:
+`size_type` | 一种类型，足以保存当前类型的最大对象的大小
+`value_type` | 元素类型
+`container_type` | 实现适配器的底层容器类型
+`A a;` | 创建一个名为a的空适配器（使用默认的容器实现）
+`A a(c);` | 创建一个名为a的适配器，带有容器c的一个拷贝
+`关系运算符` | 每个适配器都支持所有关系运算符：==、!=、<、<=、>、>=。这些运算符返回底层容器的比较结果
+`a.empty()` | 若a包含任何元素，返回false，否则返回true
+`a.size()` | 返回a中的元素数目
+`swap(a,b)`<br>`a.swap(b)` | 交换a和b的内容，a和b必须有相同的类型，包括底层容器类型。
+
+##### 定义一个适配器
+
+- 每个适配器都定义两个构造函数：默认构造函数创建一个空对象；接受一个容器的构造函数拷贝该容器来初始化适配器。
+```CPP
+stack<int> std(deq);    // 从deq拷贝元素到stack
+```
+
+- 默认情况下，stack和queue是基于deque实现的，priority_queue是基于vector实现的。
+- 我们可以在创建一个适配器时将一个命名的顺序容器作为第二个类型参数，来重载默认容器类型。
+```CPP
+// 在vector上实现的空栈
+stack<string, vecotr<string>> str_stk;
+// str_stk2在vector上实现，初始化时保存svec的拷贝
+stack<string, vector<string>> str_stk2(svec);
+```
+
+- 适配器使用的容器是有限制的。因为所有适配器都要求容器具有添加、删除和访问尾元素的能力，所以不能用array和forward_list来构造适配器。
+
+##### 栈适配器
+
+- stack类型定义在stack头文件中。栈默认用deque实现，也可以在list或vector之上实现。
+
+上表未列出的栈操作 | 解释
+`s.pop()` | 删除栈顶元素，但不返回该元素值
+`s.push(item)`<br>`s.emplace(args)` | 创建一个新元素压入栈顶，该元素通过拷贝或移动item而来，或者由args构造
+`s.top()` | 返回栈顶元素，但不将其弹出栈
+
+- 只可以使用适配器操作，而不能使用底层容器类型的操作。如`intStack.push(ix);`语句在底层deque对象上调用push_back，但不能在stack上调用push_back。
+
+##### 队列适配器
+
+- queue和priority_queue适配器定义在queue头文件上。
+
+上表未列出的queue和priority_queue操作 | 解释
+:----- | :-----:
+`q.pop()` | 删除queue的首元素或priority_queue的最高优先级元素，但不返回此元素
+`q.front()`<br>`q.back()` | 返回首元素或尾元素，但不删除此元素。只适用于queue
+`q.top()` | 返回最高优先级元素，但不删除该元素。只适用于priority_queue
+`q.push(item)`<br>`q.emplace(args)` | 在queue末尾或priority_queue中恰当的位置创建一个元素。其值为item，或者由args构造
+
+- 标准库queue使用一种先进先出（FIFO）的存储和访问策略。进入队列的对象被放置到队尾（通过q.back()访问），而离开队列的对象则从队首删除（通过q.front()访问）。
+- priority_queue允许我们为队列中的元素建立优先级。默认情况下，标准库在元素类型上使用<运算符来确定相对优先级。
