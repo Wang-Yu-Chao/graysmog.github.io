@@ -93,7 +93,7 @@ const double *const pip = &pi;  // pip是一个指向常量对象的常量指针
 ##### const成员函数／常量成员函数
 
 - isbn函数的另一个关键之处是紧随参数列表之后的const关键字，这里，const的作用是修改隐式this指针的类型。
-- 默认情况下，this的类型是**指向非常量的类类型**的**常量指针**。例如在Sales_data成员函数中，this的类型是Sales_data \*const。这意味着（在默认情况下）我们不能把this从一个非常量绑定到一个常量对象上。这一情况就使得我们不能在一个常量对象上调用普通的成员函数。
+- 默认情况下，this的类型是**指向非常量的类类型**的**常量指针**。例如在Sales_data成员函数中，this的类型是Sales_data *const。这意味着（在默认情况下）我们不能把this从一个非常量绑定到一个常量对象上。这一情况就使得我们不能在一个常量对象上调用普通的成员函数。
 - C++语言的做法是允许把const关键字放在成员函数的参数列表之后，此时，紧跟在参数列表后面的const表示this是一个指向常量的指针。像这样使用const的成员函数被称作**常量成员函数**。因为this是指向常量的指针，所以常量成员函数不能改变调用它的对象的内容。
 - 可以把isbn的函数想象成如下的形式：
 ```CPP
@@ -131,7 +131,7 @@ Sales_data& Sales_data::combine(const Sales_data &rhs)
 {
     units_sold += rhs.units_sold;
     revenue += rhs.revenue;
-    return \*this;
+    return *this;
 }
 ```
 - return语句解引用this指针以获得执行该函数的对象。
