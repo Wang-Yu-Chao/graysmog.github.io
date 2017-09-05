@@ -270,9 +270,9 @@ c.push_back(Sales_data("345－93247342", 25, 15.99));
 ```CPP
 if (!c.empty())
 {
-    auto val = \*c.begin(), val2 = c.front();   // 两种获取对首元素的引用的方式
+    auto val = *c.begin(), val2 = c.front();   // 两种获取对首元素的引用的方式
     auto last = c.end();
-    auto val3 = \*(--last);
+    auto val3 = *(--last);
     auto val4 = c.back();                       // 两种获取对尾元素的引用的方式（不适用于forward_list）
 }
 ```
@@ -316,7 +316,7 @@ while (!ilist.empty())
 list<int> lst = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 auto it = lst.begin()
 while (it != 1st.end())
-    if (\*it % 2)
+    if (*it % 2)
         it = lst.erase(it);     // 指向之后的位置，不需要递增it
     else
         ++it;

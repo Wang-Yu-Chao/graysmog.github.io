@@ -77,7 +77,8 @@ std::string isbn() const { return this->bookNo };   // this指向对象的指针
 ##### const成员函数
 
 - isbn函数的另一个关键之处是紧随参数列表之后的const关键字，这里，const的作用是修改隐式this指针的类型。
-- 
+- 默认情况下，this的类型是**指向非常量的类类型**的**常量指针**。例如在Sales_data成员函数中，this的类型是Sales_data \*const。这意味着（在默认情况下）我们不能把this从一个非常量绑定到一个常量对象上。这一情况就使得我们不能在一个常量对象上调用普通的成员函数。
+- C++语言的做事发允许把const关键字放在成员
 
 
 

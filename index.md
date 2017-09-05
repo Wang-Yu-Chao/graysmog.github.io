@@ -35,6 +35,8 @@
 
 7. [类](/docs/CPP/class.md)
 9. [顺序容器](/docs/CPP/sequential-container.md)
+13. [拷贝控制](/docs/CPP/copy-control.md)
+15. [面对对象程序设计](/docs/CPP/oop.md)
 
 ## 《算法导论》课后习题个人解答
 
