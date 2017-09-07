@@ -31,7 +31,7 @@
 
 1. [排序](/docs/Data-Structure/sorting.md)
 
-## C++ Primer
+## 《C++ Primer》笔记
 
 7. [类](/docs/CPP/class.md)
 9. [顺序容器](/docs/CPP/sequential-container.md)

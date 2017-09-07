@@ -555,12 +555,117 @@ class Link_screen
 class Screen
 {
     friend class Window_mgr;
+};
+
+class Window_mgr
+{
+public:
+    using ScreenIndex = std::vector<Screen>::size_type;
+    void clear(ScreenIndex);
+private:
+    std::vector<Screen> screens{Screen(24, 80, ' ')};
+};
+void Window_mgr::clear(ScreenIndex i)
+{
+    Screen &s = screens[i];
+    s.contents = string(s.height * s.width, ' ');
 }
 ```
+- 友元不存在传递性。每个类负责控制自己的友元类或友元函数。如果Window_mgr有它自己的友元，则这些友元不因此成为Screen的友元。
+
+##### 令成员函数作为友元
+
+- 当把一个成员函数声明为友元时，我们必须明确指出该成员函数属于哪个类：
+```CPP
+class Screen
+{
+    // Window_mgr::clear必须在Screen类之前被声明
+    friend void Window_mgr:\:clear(ScreenIndex);
+    // ......
+};
+```
+- 如果想要令某个成员函数作为友元，我们必须**仔细组织程序的结构以满足声明和定义的彼此依赖关系**。这个例子中，我们必须按照如下方式设计程序：
+    - 首先定义Window_mgr类，其中声明clear函数，但是不能定义它。在clear使用Screen的成员之前必须先声明Screen。
+    - 接下来定义Screen，包括对于clear的友元声明。
+    - 最后定于clear，此时它才可以使用Screen的成员。
+
+##### 函数重载和友元
+
+- 尽管重载函数的名字相同，但它们仍然是不同的函数。因此，如果一个类想把一组重载函数声明成它的友元，它需要对这组函数中的**每一个分别声明**：
+```CPP
+extern std::ostream& storeOn(std::ostream &, Screen &);
+extern BitMap& storeOn(BitMap &, Screen &);
+class Screen
+{
+    friend std::ostream& storeOn(std::ostream &, Screen &);
+    // ......
+};
+```
+
+##### 友元声明和作用域
+
+- 类和非成员函数的声明不是必须在它们的友元声明之前。当一个名字第一次出现在一个友元声明中时，我们隐式地假定该名字在当前作用域中是可见的。然而，友元本身不一定真的声明在当前作用域中。
+- 甚至就算在类的内部定义该函数，我们也必须在类的外部提供相应的声明从而使得函数可见。换句话说，即使我们仅仅是用声明友元的类的成员调用该友元函数，它也必须是被声明过的。
+
+```CPP
+struct X
+{
+    friend void f() { /* 友元函数可以定义在类的内部 \*/ }
+    X() { f(); }
+    void g();
+    void h();
+};
+void X::g() { return f(); }     // 错误：f还没有被声明
+void f();                       // 声明那个定义在X中的函数
+void X::h() { return f(); }     // 正确：现在f在作用域中了
+```
+- 关于这段代码最重要的是理解友元声明的作用是影响访问权限，它本身并非普通意义上的声明。
 
 ## 4. 类的作用域
 
+- 在类的作用域之外：
+    1. 对于**普通的数据和函数成员**只能由对象、引用或者指针使用成员访问运算符（.和->）来访问。
+    2. 对于**类的类型成员**则使用作用域运算访问符（::）访问。
+```CPP
+Screen::pos ht = 24, wd = 80;   // 使用Screen定义的pos类型
+Screen scr(ht, wd, ' ');
+Screen *p = &scr;
+char c = scr.get();
+c = p->get();
+```
+
+##### 作用域和定义在类外部的成员
+
+- 一个类就是一个作用域。在类的外部，成员的名字被隐藏起来了。一旦遇到了类名，定义的剩余部分（参数列表和函数体）就在类的作用域之内了，可以直接使用类的其他成员。
+```CPP
+void Window_mgr::clear(ScreenIndex i)
+{
+    Screen &s = screens[i];
+    s.contents = string(s.height * s.width, ' ');
+}
+```
+- 因为编译器在处理参数列表之前已经明确了我们当前正位于Window_mgr类的作用域中，所以不必再专门说明ScreenIndex是Window_mgr类定义的。screens也是在Window_mgr类中定义的。
+- 另一方面，函数的返回类型通常出现在函数名之前。因此当成员函数定义在类的外部时，返回类型中使用的名字都位于类的作用域之外。这时，**返回类型必须指明它是哪个类的成员**。
+- 例如加入addScreen新函数，用来向显示器添加一个新的屏幕，返回类型为ScreenIndex：
+```CPP
+class Window_mgr
+{
+public:
+    ScreenIndex addScreen(const Screen&);
+    // ......
+};
+Window_mgr::ScreenIndex Window_mgr::addScreen(const Screen &s)
+{
+    screens.push_back(s);
+    return screens.size() - 1;
+}
+```
+
 ### 名字查找与类的作用域
+
+- 类的定义分为两步处理：
+    - 首先，编译成员的声明。
+    - 知道类全部可见后才编译函数体。
 
 ## 5. 构造函数再探
 
