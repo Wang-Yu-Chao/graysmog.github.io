@@ -96,7 +96,7 @@ const double *const pip = &pi;  // pip是一个指向常量对象的常量指针
 ##### const成员函数／常量成员函数
 
 - isbn函数的另一个关键之处是紧随参数列表之后的const关键字，这里，const的作用是修改隐式this指针的类型。
-- 默认情况下，this的类型是**指向非常量的类类型**的**常量指针**。例如在Sales_data成员函数中，this的类型是Sales_data *const。这意味着（在默认情况下）我们不能把this从一个非常量绑定到一个常量对象上。这一情况就使得我们不能在一个常量对象上调用普通的成员函数。
+- 默认情况下，this的类型是**指向非常量的类类型**的**常量指针**。例如在Sales_data成员函数中，this的类型是Sales_data \*const。这意味着（在默认情况下）我们不能把this从一个非常量绑定到一个常量对象上。这一情况就使得我们不能在一个常量对象上调用普通的成员函数。
 - C++语言的做法是允许把const关键字放在成员函数的参数列表之后，此时，紧跟在参数列表后面的const表示this是一个指向常量的指针。像这样使用const的成员函数被称作**常量成员函数**。因为this是指向常量的指针，所以常量成员函数不能改变调用它的对象的内容。
 - 可以把isbn的函数想象成如下的形式：
 ```CPP
@@ -106,7 +106,7 @@ std::string Sales_data::isbn(const Sales_data *const this)
 { return this->isbn; }
 ```
 - 这里，isbn可以读取它的对象的数据成员，但不能写入新值。
-- 常量对象，以及常量对象的引用或指针都只能调用常量成员函数。
+- **常量对象，以及常量对象的引用或指针都只能调用常量成员函数**。
 
 ##### 类作用域和成员函数
 
@@ -134,7 +134,7 @@ Sales_data& Sales_data::combine(const Sales_data &rhs)
 {
     units_sold += rhs.units_sold;
     revenue += rhs.revenue;
-    return *this;
+    return \*this;
 }
 ```
 - return语句解引用this指针以获得执行该函数的对象。
@@ -320,16 +320,243 @@ std::ostream &print(std::ostream&, const Sales_data&);
 ### 类成员再探
 
 - 这里需要两个新类作为例子：Screen和Window_mgr。
+- Screen表示显示器中的一个窗口。每个Screen包含一个用于保存Screen内容的string成员和是哪个string::size_type类型的成员，分别表示光标的位置以及屏幕的高和宽。
 
 ##### 定义一个类型成员
 
+- 除了定义数据和函数成员之外，类还可以自定义某种类型在类中的别名。由类定义的类型名字和其他成员函数一样存在访问限制，可以是public或者private中的一种。
+```CPP
+class Screen
+{
+public:
+    typedef std::string::size_type pos;
+private:
+    pos cursor = 0;
+    pos height = 0, weight = 0;
+    std::string contents;
+};
+```
+- Screen在public中定义了pos，所以用户可以使用这个名字。通过把pos定义成public成员，可以隐藏Screen实现的细节。
+- 使用类型别名由两点注意：
+    1. 既可以使用typedef也可以使用别名声明（using）：
+    ```CPP
+    class Screen
+    {
+    public:
+        using pos = std::string::size_type;
+    };
+    ```
+    2. 用来定义类型的成员必须先定义后使用，这一点与普通成员有所区别。
 
+##### Screen类的成员函数
+
+```CPP
+class Screen
+{
+public:
+    typedef std::string::size_type pos;
+    screen() = default;
+    Screen(pos ht, pos wd, char c) : height(ht), width(wd),
+        contents(ht * wd, c) { }
+    char get() const { return contents[cursor] };           // 隐式内联。读取光标处字符
+    inline char get(pos ht, pos wd) const;                  // 显式内联。
+    Screen &move(pos r, pos c);                             // 此处没有，但能在之后被设为内联
+private:
+    pos cursor = 0;
+    pos height = 0, width = 0;
+    std::string contents;
+};
+```
+
+- 第二个构造函数为cursor成员隐式地使用了类内初始值。
+
+##### 令成员作为内联函数
+
+- 在类中，定义在类内部的成员函数是自动inline的。因此，Screen的构造函数和get函数默认是inline的。
+- 也可以在类的内部把inline作为声明的一部分显式地声明成员函数。
+- 同样的，也能在类的外部用inline关键字修饰函数的定义。
+```CPP
+inline Screen &Screen::move(pos r, pos s)       // 可以在函数的定义处指定inline
+{
+    pos row = r * width;        // 将二维的行数映射到一位数组上
+    cursor = row + c;
+    return \*this;
+}
+
+char Sceen::get(pos r, pos c) const     // 在类的内部声明成inline，定义出可以不用指定inline
+{
+    pos row = r * width;
+    return contents[row + c];
+}
+```
+- 在声明和定义的地方都可以说明inline，不过最好只在类外部定义的地方说明inline，这样可以使类更容易理解。
+
+##### 重载成员函数
+
+- 和非成员函数一样，成员函数可以被重载，只要函数之间在参数的数量或类型上有区别就可以（返回类型是否相同是无关的）。如两个版本的get函数。
+
+##### 可变数据成员
+
+- 有时会发生这样一种情况，我们希望能修改类的某个数据成员，即使是在一个const成员函数内。可以通过在变量的声明中加入mutable关键字做到。
+- 一个*可变数据成员*（mutable data member）永远不会是const，即使它是const对象的成员。因此，一个const成员函数可以改变一个可变成员的值。
+- 举个例子，为Screen类添加一个名为access_ctr的可变成员，通过它我们可以追踪每个Screen的成员函数被调用了多少次：
+```CPP
+class Screen
+{
+public:
+    void some_member() const;
+private:
+    mutable size_t access_ctr;     // 即使在一个const对象内也能被修改
+};
+
+void Screen::some_member() const
+{
+    ++access_ctr;
+}
+```
+- 尽管some_member是一个const成员函数，它仍然能够改变access_ctr的值。该成员是个可变成员，因此任何成员函数都能改变它的值。
+
+##### 类数据成员的初始值
+
+- *补充：类内初始值*。C++11规定，可以为数据成员提供一个**类内初始值**（in-class initializer）。创建对象时，类内初始值将用于初始化数据成员。没有初始值的成员将被默认初始化。提供类内初始值必须使用**等号**或者**花括号**（列表初始化），不能使用圆括号。
+- 我们继续定义一个窗口管理类Window_mgr来表示显示器上的一组Screen。这个类包含一个Screen类型的vector。我们希望每个Window_mgr类开始时总是拥有一个默认初始化的Screen，这一点可通过类内初始值实现：
+```CPP
+class Window_mgr
+{
+private:
+    std::vector<Screen> screens{Screen(24, 80, ' ')};
+    // 对vector对象进行列表初始化。默认情况下，一个Window_mgr包含一个标准尺寸的空白Screen   
+}
+```
 
 ### 返回*this的成员函数
 
+- *补充:左值和右值*。C++表达式要不然是右值（rvalue），要不然是左值（lvalue）。一个左值表达式的求值结果是一个对象或者一个函数。当一个对象被用作右值时，用的是对象的值（内容）；当对象被用作左值时，用的是对象的身份（在内存中的位置）。
+- *补充：引用返回左值*。函数的返回类型决定函数调用是否是左值。**调用一个返回引用的函数得到左值**，其他返回类型得到右值。可以像其他左值一样使用返回引用的函数，特别是将其赋值（除了返回常量引用）：
+```CPP
+char &get_val(string &str, string::size_type ix)    // 返回引用的函数，得到左值
+{
+    return str[ix];
+}
+int main()
+{
+    string s("a value");
+    get_val(s, 0) = 'A';        // 将s[0]的值改为A，s为"A value"
+    return 0;
+}
+```
+
+- 接下来继续添加一些函数，它们负责设置光标所在位置的字符或者其他任一给定位置的字符（set函数）：
+```CPP
+class Screen
+{
+public:
+    Screen &set(char);
+    Screen &set(pos, pos, char);
+    // 其他成员同上...
+};
+inline Screen &Screen::set(char c)
+{
+    contents[cursor] = c;
+    return \*this;
+}
+inline Screen &Screen::set(pos r, pos col, char ch)
+{
+    contents[r * width + col] = ch;
+    return \*this;
+}
+```
+- set成员的返回值是调用set的对象的引用，返回引用的函数是左值的，意味着这些函数返回的是对象本身而非对象的副本。从而可以把一系列操作连接在一条表达式中，在同一个对象上执行：
+```CPP
+myScreen.move(4, 0).set('#');
+```
+- 如果令move和set返回Screen而非Screen&，则返回值将是*this的副本（拷贝），上述语句将不能改变myScreen的值。
+
+##### 从const成员函数返回*this
+
+- 一个const成员函数如果以引用的形式返回*this，那么它的返回类型将是常量引用。
+- 接下来添加一个名为display的操作，它负责打印Screen的内容，同时它也能和move、set出现在同一序列中，所以display也应该返回执行它的对象的引用。并且，display也不需要改变它的内容，因此令display为一个const成员函数。此时this为指向常量的常量指针。
+- 由此推断，display的返回类型应该是const Sales_data&，但是，如果真的令display返回一个const的引用，则我们将不能把display嵌入到一组动作的序列中去：
+```CPP
+Screen myScreen;
+myScreen.display(cout).set('*');    // 如果display返回常量引用，则再调用set发生错误！
+```
+
+##### 基于const的重载
+
+- *补充：重载和const形参*。顶层const不影响传入函数的对象；而通过区分底层const和非底层const可以实现函数重载。
+- 通过区分成员函数是否是const的，我们可以对其进行重载，其原因与我们之前根据指针参数是否指向const而重载函数的原因差不多。
+- 一方面，只能在一个常量对象上调用const成员函数。另一方面，虽然可以在非常量对象上调用常量版本或非常量版本，但显然此时非常量版本是一个更好的选择。
+- 下面这个例子中，定义了一个名为do_display的私有成员，由它负责打印Screen的实际工作。所有的display操作将调用这个函数，然后返回执行这个操作的对象：
+```CPP
+class Screen
+{
+public:
+    Screen &display(std::ostream &os)
+    {
+        do_display(os);
+        return \*this;
+    }
+    const Screen &display(std::ostream &os) const
+    {
+        do_display(os);
+        return \*this;
+    }
+private:
+    void do_display(std::ostrem &os) const { os << contents; }
+};
+```
+- 当一个成员调用另一个成员时，this指针在其中隐式地传递。因此，display调用do_display时，它的this指针隐式地传递给do_display，而当display的非常量版本调用do_display时，它的this指针将隐式地从指向非常量的指针转换成指向常量的指针。
+- do_display完成后，两display分别返回解引用的非常量和常量引用。
+- *建议：对于公共代码使用私有功能函数*。定义一个单独的do_display函数的原因：
+    - 避免在多处使用同样的代码。
+    - display可能会更加复杂，公共代码的作用将更加明显。
+    - 添加调试信息更加容易。
+    - **这个额外的函数调用不会增加任何开销。因为我们已经类内部定义了do_display，所以它隐式地被声明为内敛函数。**
+
 ### 类类型
 
+- 没个类定义了唯一的类型。对于两个类来说，即使它们的成员完全一样，这两个类也是两个不同的类型。
+- 我们可以把类名作为类型的名字使用，或者可以把类名跟在关键字class或struct之后：
+```CPP
+Sales_data item;
+class Sales_data item;  // 相互等价的声明
+```
+
+##### 类的声明
+
+- 同函数一样，可以仅声明类而暂时不定义它。
+```CPP
+class Screen;
+```
+- 这种声明有时被称为**前向声明**。在它声明之后，定义之前，它是一个*不完全类型*。
+- 不完全声明只能在非常有限的情况下使用：
+    - 可以定义指向这种类型的**指针或引用**。
+    - 可以声明（但不能定义）用不完全类型作为**参数或返回值**的函数。
+- 在创建一个类的对象之前这个类必须被定义过，而不能仅仅被声明。否则编译器无法了解这样的对象需要多少存储空间。
+- 直到类被定义之后数据成员才能被声明成这种类类型，所以一个类的成员类型不能是该类自己。然而，一旦一个类的名字出现后，它就被认为是声明过了，因此类允许包含指向它自身的引用或指针：
+```CPP
+class Link_screen
+{
+    Screen window;
+    Link_screen \*next;
+    Link_screen \*prev;
+};
+```
+
 ### 友元再探
+
+- 除了函数，类还可以把其他类定义成友元，也可以把其他类的成员函数定义成友元。
+
+##### 类之间的友元关系
+
+- 如果需要为Window_mgr添加一个名为clear的成员，它负责把一个指定的Screen的内容都设为空白，则clear需要访问Screen的私有成员。想要令这种访问合法，Screen需要把Window_mgr指定成它的友元
+```CPP
+class Screen
+{
+    friend class Window_mgr;
+}
+```
 
 ## 4. 类的作用域
 
