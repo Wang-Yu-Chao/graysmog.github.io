@@ -69,7 +69,7 @@ void word_transform(ifstream &map_file, ifstream &input)
 
 ```CPP
 map<string, string> buildMap(ifstream &map_file)
-{
+
     map<string, string> trans_map;
     string key;
     string value;

@@ -36,6 +36,8 @@
 7. [类](/docs/CPP/class.md)
 8. [IO库](/docs/CPP/IO-lib.md)
 9. [顺序容器](/docs/CPP/sequential-container.md)
+10. [泛型算法](/docs/CPP/generic-algorithm.md)
+11. [关联容器](/docs/CPP/associative-container.md)
 13. [拷贝控制](/docs/CPP/copy-control.md)
 15. [面对对象程序设计](/docs/CPP/oop.md)
 
