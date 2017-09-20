@@ -67,6 +67,25 @@ void biggies(vector<string> &words, vector<string>::size_type sz)
 
 ### iostream迭代器
 
+##### 使用流迭代器处理类类型
+
+```CPP
+istream_iterator<Salse_item> item_iter(cin), eof;
+ostream_iterator<Sales_item> out_iter(cout, "\n");
+Sales_item sum = *item_iter++;
+while (item_iter != eof)
+{
+    if (item_iter->isbn() == sum.isbn)
+        sum += \*item_iter++;
+    else
+    {
+        out_iter = sum;
+        sum = \*item_iter++;
+    }
+}
+out_iter = sum;
+```
+   
 ### 反向迭代器
 
 ## 5. 泛型算法结构
