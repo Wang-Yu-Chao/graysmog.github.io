@@ -633,3 +633,42 @@ int main()
     return 0;
 }
 ```
+
+#### 10.38
+
+迭代器类别 | 支持的操作
+:------: | :--------:
+输入迭代器  |  只读，不写；单遍扫描，只能递增
+输出迭代器  |  只写，不读；单边扫描，只能递增
+前向迭代器  |  可读写；多遍扫描，只能递增
+双向迭代器  |  可读写；多遍扫描，可递增递减
+随机访问迭代器  |  可读写，多遍扫描，支持全部迭代器运算
+
+#### 10.39
+
+- list上的迭代器属于双向迭代器
+- vector上的迭代器属于随机访问迭代器
+
+#### 10.40
+
+- copy要求输入迭代器和输出迭代器
+- reverse要求双向迭代器
+- unique要求前向迭代器
+
+#### 10.41
+
+- replace(beg, end, old_val, new_val)：将迭代范围beg到end中的所有值为old_val的元素替换为值new_val的元素
+- replace_if(beg, end, pred, new_val)：将迭代范围beg到end中的所有满足谓词pred的元素的值替换为new_val
+- replace_copy(beg, end, dest, old_val, new_val)：将迭代范围beg到end拷贝到从dest起的位置，其中值为old_val的元素在拷贝时替换为new_val
+- replace_copy_if(beg, end, dest, pred, new_val)：将迭代范围beg到end拷贝到从dest起的位置，其中满足谓词pred的元素在拷贝时替换为new_val
+
+#### 10.42
+
+```CPP
+// 使用list特有的成员函数算法，而不是通用版本算法
+void elimDups(list<string> &words)
+{
+    words.sort();
+    words.unique();
+}
+```
