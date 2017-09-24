@@ -39,6 +39,8 @@
 10. [泛型算法](/docs/CPP/generic-algorithm.md)
     - [练习答案](/docs/CPP/exercise-10.md)
 11. [关联容器](/docs/CPP/associative-container.md)
+    - [练习答案](/docs/CPP/exercise-12.md)
+12. [动态内存](/docs/CPP/dynamic-memory.md)
 13. [拷贝控制](/docs/CPP/copy-control.md)
 15. [面对对象程序设计](/docs/CPP/oop.md)
 

@@ -72,8 +72,8 @@ int main(int argc, char const *argv[])
     while (ifstrm >> d)
         vd.push_back(d);
 
-    /* 错误：因为第三个参数的类型决定了函数使用哪个加法以及返回值的类型，
-            所以该语句使用了整型加法，返回整型数。应该用0.0 */
+    // 错误：因为第三个参数的类型决定了函数使用哪个加法以及返回值的类型，
+    // 所以该语句使用了整型加法，返回整型数。应该用0.0
     sum = accumulate(vd.cbegin(), vd.cend(), 0);
     cout << sum << endl;
 
