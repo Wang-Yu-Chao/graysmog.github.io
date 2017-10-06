@@ -204,6 +204,38 @@ class StrBlob
 
 ### allocator类
 
+```CPP
+allocator<string> alloc;            // 可以分配string的allocator对象
+auto const p = alloc.allocate(n);   // 分配n个未初始化的string
+```
+
+##### allocator分配未构造的内存
+
+```CPP
+auto q = p;
+alloc.construct(q++);           // *q为空字符串
+alloc.construct(q++, 10, 'c');  // *q为cccccccccc
+alloc.construct(q++, "hi!");    // *q为hi!
+// q指向最后构造的元素之后的位置
+```
+
+```CPP
+while (q != p)
+    alloc.destroy(--q);     // 释放我们真正构造的string
+```
+
+```CPP
+alloc.deallocate(p, n);
+```
+
+##### 拷贝和填充未初始化内存的算法
+
+```CPP
+auto p = alloc.allocate(vi.size() * 2);
+auto p = uninitialize_copy(vi.begin(), vi.end(), p);
+uninitialized_fill_n(q, vi.size(), 42);
+```
+
 ## 3. 使用标准库：文本查询程序
 
 ### 文本查询程序设计
