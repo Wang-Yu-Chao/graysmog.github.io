@@ -1,3 +1,18 @@
+---
+    author: GraySmog
+    comments: true
+    date: 2017-10-20
+    layout: post
+    title: Disjoint Set
+    categories:
+    - Data Structure
+    - C
+    tags:
+    - data structure
+    - c
+    - blog
+---
+
 # 互斥集
 
 ## 关系（Relation)
@@ -73,4 +88,24 @@ void setUnion(DisjSet S, SetType Root1, SetType Root2)
 
 ## （路径压缩）Path Compression
 
-Path compression is performed during a Find operation and is independent of the strategy used to perform Unions. The effect of path compression is that every node on the path from X to the root has its parent changed to the root.
+#### Algorithm
+
+Path compression is performed during a Find operation and is independent of the strategy used to perform Unions. The effect of path compression is that every node on the path from X to the root has its parent changed to the root. And the fast future access on these nodes will pay for the extra word to do the path compression.  
+The only change to the Find routine is that S[X] is made equal to the value returned by Find.
+
+```C
+SetType Find(ElementType X, DisjSet S)
+{
+    if (S[X] <= 0)
+        return X;
+    else
+        return S[X] = Find(S[X], S);
+}
+```
+
+#### Analysis
+
+- If we use the Union/Find alogrithm, the worst case of `$O(Mlog{N})$` can occur fairly easily and naturally.
+- So when *Unions* are done arbitrarily, path compression is a good idea, because there is an abundance of deep nodes. When path compression is done in this case, a sequence of M operations requires at most `$O(Mlog{N})$` time.
+- Path compression is perfectly compatible with union-by-size, because path compression can change the heights of the trees. Then the heights stored for each tree become estimated heights (sometimes known as ranks), but it turns out that union-by-rank is just as efficient in theory as union-by-size.
+- The worst case for union-by-rank and path compression: The running time of a sequence of M *Unions* and *Finds* is `$O(mlog^{*}n)$`

@@ -1,3 +1,18 @@
+---
+    author: GraySmog
+    comments: true
+    date: 2017-10-20
+    layout: post
+    title: Splay Tree
+    categories:
+    - Data Structure
+    - C
+    tags:
+    - data structure
+    - c
+    - blog
+---
+
 ## Splay Tree
 
 ### 性质

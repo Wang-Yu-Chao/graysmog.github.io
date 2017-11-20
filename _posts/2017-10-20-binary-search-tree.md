@@ -1,3 +1,18 @@
+---
+    author: GraySmog
+    comments: true
+    date: 2017-10-20
+    layout: post
+    title: Binary Search Tree
+    categories:
+    - Data Structure
+    - C
+    tags:
+    - data structure
+    - c
+    - blog
+---
+
 ## The Binary Search Tree
 
 ### 性质
